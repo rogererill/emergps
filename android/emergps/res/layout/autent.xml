@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center">
+    <EditText
+    	android:id="@+id/text_user"
+    	android:hint="@string/original_user"
+    	android:lines="1"
+    	android:inputType="textUri"
+    	android:layout_height="wrap_content"
+    	android:layout_width="fill_parent" />
+    <EditText
+    	android:id="@+id/text_pass"
+    	android:hint="@string/original_pass"
+    	android:lines="1"
+    	android:inputType="textUri"
+    	android:layout_height="wrap_content"
+    	android:layout_width="fill_parent" />
+    <Button
+    	android:id="@+id/login_button"
+    	android:text="@string/login_button"
+    	android:layout_height="wrap_content"
+    	android:layout_width="fill_parent" />
+    
+</LinearLayout>
