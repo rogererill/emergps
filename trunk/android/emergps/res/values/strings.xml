@@ -2,4 +2,10 @@
 <resources>
     <string name="hello">Hello World, Emergps!</string>
     <string name="app_name">Emergps</string>
+    <string name="original_user">User</string>
+    <string name="original_pass">Pass</string>
+    <string name="login_button">Login</string>
+    <string name="app_error">Error!</string>
+    <string name="error_login">User o pass incorrecte!</string>
+    
 </resources>
