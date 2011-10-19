@@ -29,7 +29,7 @@ public class Emergps extends Activity implements OnClickListener{
     	String stp = tp.getText().toString();
     	final String TAG = "Autenticació";
     	
-    	if(userOk(stu, stp)){
+    	if(/*userOk(stu, stp)*/true){
     		Log.d(TAG, "OK!");
 			Intent i = new Intent(this, Menu.class);
 			startActivity(i);

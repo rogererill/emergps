@@ -7,5 +7,8 @@
     <string name="login_button">Login</string>
     <string name="app_error">Error!</string>
     <string name="error_login">User o pass incorrecte!</string>
-    
+    <string name="report_label">Reportar</string>
+    <string name="incid_label">Incidència</string>
+    <string name="log_label">Log</string>
+    <string name="exit_label">Sortir</string>
 </resources>

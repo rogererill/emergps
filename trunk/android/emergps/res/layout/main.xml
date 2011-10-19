@@ -1,12 +1,57 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/hello"
-    />
+<LinearLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:background="@color/background"
+   android:layout_height="fill_parent"
+   android:layout_width="fill_parent"
+   android:padding="15dip"
+   android:orientation="horizontal">
+   <LinearLayout
+      android:orientation="vertical"
+      android:layout_height="wrap_content"
+      android:layout_width="fill_parent"
+
+      android:paddingLeft="20dip"
+      android:paddingRight="20dip">
+      <TextView
+         android:text="@string/app_name"
+         android:layout_height="wrap_content"
+         android:layout_width="wrap_content"
+         android:layout_gravity="center"
+         android:layout_marginBottom="20dip"
+         android:textSize="24.5sp" />
+      <TableLayout
+         android:layout_height="wrap_content"
+         android:layout_width="wrap_content"
+         android:layout_gravity="center"
+         android:stretchColumns="2">
+         <TableRow>
+    	<Button 
+    		android:id="@+id/report_label" 
+    		android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content"  
+      	  	android:text="@string/report_label" 
+       	 	android:drawableTop="@drawable/icon" />
+       	 <Button
+    		android:id="@+id/incid_label" 
+    		android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content"  
+       	 	android:text="@string/incid_label" 
+        	android:drawableTop="@drawable/icon" />
+         </TableRow>
+         <TableRow>
+  	    <Button 
+    		android:id="@+id/log_label" 
+    		android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content"  
+      	  	android:text="@string/log_label" 
+       	 	android:drawableTop="@drawable/icon" />
+   	 	<Button 
+    		android:id="@+id/exit_label" 
+    		android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content"  
+       	 	android:text="@string/exit_label" 
+        	android:drawableTop="@drawable/icon" />
+         </TableRow>
+      </TableLayout>
+   </LinearLayout>
 </LinearLayout>
