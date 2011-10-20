@@ -1,17 +1,53 @@
+<!DOCTYPE html>
 <html>
-	<title> </title>
-	<head> 
-		 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false&amp;key=ABQIAAAABXxTjx_6_HqFtM_KOT_ZHBS04KOqFTod7Y1A32VKs8iM4xzi3RSWCvFYurYmL5a9AUmSrHcJyJ5REg" type="text/javascript"></script>
-		 <script type="text/javascript">
-		 	function iniciar() {
-		 		var mapa = new GMap2(document.getElementById("mapa"));
-		 		mapa.setCenter(new GLatLng(37.4419, -122.1419, 13);
-		 		map.setUIToDefault();
-		 	}
-		 </script>
-	</head>
-		
-	<body onload="iniciar()" onunload="GUnload()">
-		<div id="mapa" style="width: 500px; height: 300px"></div>
-	</body>
+<title> emerGPS </title>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<style type="text/css">
+  html { height: 100% }
+  body { height: 100%; margin: 0; padding: 0 }
+  #map_canvas { height: 100% }
+</style>
+<script type="text/javascript"
+    src="http://maps.googleapis.com/maps/api/js?sensor=false">
+</script>
+<script type="text/javascript">
+  	var map;
+	function initialize() {
+	var myLatlng = new google.maps.LatLng(-25.363882,131.044922);
+	var myOptions = {
+		zoom: 4,
+	    center: myLatlng,
+	    mapTypeId: google.maps.MapTypeId.ROADMAP
+	 }
+	 map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+	  
+	 google.maps.event.addListener(map, 'click', function(event) {
+	 	placeMarker(event.latLng);
+	 });
+	  
+	}
+	  
+	function placeMarker(location) {
+		var marker = new google.maps.Marker({
+	      position: location, 
+	      map: map,
+	      title:"emergencia"
+	  	});
+	  
+		google.maps.event.addListener(marker, 'click', function() {
+		 	var finestra = new google.maps.InfoWindow(
+		 		{ content: this.title,
+		 		  size: new google.maps.Size(50,50)
+		 		});
+		 	finestra.open(map,marker);
+		});
+	  	map.setCenter(location);
+	}
+
+</script>
+</head>
+<body onload="initialize()">
+  <div id="map_canvas" style="width:50%; height:50%"></div>
+</body>
 </html>
