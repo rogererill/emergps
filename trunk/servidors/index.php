@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<?php 
+	$titul = $_GET['titul'];
+?>
 <html>
 <title> emerGPS </title>
 <head>
@@ -32,7 +35,7 @@
 		var marker = new google.maps.Marker({
 	      position: location, 
 	      map: map,
-	      title:"emergencia"
+	      title:"<html> <body> <form> <input type='text' name='titul'> <input type='submit' name='enviar' value='ok'> </form></body> </html>"
 	  	});
 	  
 		google.maps.event.addListener(marker, 'click', function() {
@@ -43,11 +46,13 @@
 		 	finestra.open(map,marker);
 		});
 	  	map.setCenter(location);
+	  	map.addOverlay(marker);
 	}
 
 </script>
 </head>
 <body onload="initialize()">
   <div id="map_canvas" style="width:50%; height:50%"></div>
+  <p> <?php echo $titul ?> </p>
 </body>
 </html>
