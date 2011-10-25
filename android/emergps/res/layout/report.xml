@@ -4,9 +4,41 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/hello"
-    />
+    <TableLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:stretchColumns="2">
+        <TableRow>
+			<TextView  
+    			android:layout_width="fill_parent" 
+    			android:layout_height="wrap_content" 
+    			android:text="@string/desc_report" />
+			<EditText
+    			android:id="@+id/desc_report"
+    			android:lines="3"
+    			android:inputType="textUri"
+    			android:layout_height="wrap_content"
+    			android:layout_width="fill_parent" />
+    	</TableRow>
+    	<TableRow>
+			<TextView  
+    			android:layout_width="fill_parent" 
+    			android:layout_height="wrap_content" 
+    			android:text="@string/tipus_report" />
+			<EditText
+    			android:id="@+id/desc_report"
+    			android:lines="1"
+    			android:inputType="textUri"
+    			android:layout_height="wrap_content"
+    			android:layout_width="fill_parent" />
+    	</TableRow>
+
+    		<Button
+    			android:id="@+id/enviar_report"
+    			android:layout_height="wrap_content"
+    			android:layout_width="fill_parent" 
+    			android:text="@string/report_button"/>
+
+    </TableLayout>
 </LinearLayout>

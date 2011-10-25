@@ -1,12 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/hello"
-    />
-</LinearLayout>
+
+<RelativeLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:id="@+id/frame"
+   android:orientation="vertical"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent">
+   
+   <com.google.android.maps.MapView
+      android:id="@+id/map"
+      android:apiKey="0ahK2nHAdf0xAKdo5LOGtTcpc6PTDNA9JY_7JSg"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent" 
+      android:clickable="true" />
+
+
+	<upc.pxc.emergps.TransparentPanel
+		android:id="@+id/transparent_panel"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:paddingLeft="5px"
+		android:paddingTop="5px"
+		android:paddingRight="5px"
+		android:paddingBottom="5px">
+
+
+	<Button android:id="@+id/fi_incid"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		android:text="@string/fi_incid" />
+	<Button android:id="@+id/edit_incid"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		android:text="@string/edit_incid" />
+
+	</upc.pxc.emergps.TransparentPanel>
+
+		
+</RelativeLayout>
