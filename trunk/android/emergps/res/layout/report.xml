@@ -26,12 +26,8 @@
     			android:layout_width="fill_parent" 
     			android:layout_height="wrap_content" 
     			android:text="@string/tipus_report" />
-			<EditText
-    			android:id="@+id/desc_report"
-    			android:lines="1"
-    			android:inputType="textUri"
-    			android:layout_height="wrap_content"
-    			android:layout_width="fill_parent" />
+			<Spinner
+    			android:id="@+id/tipus_report" />
     	</TableRow>
 
     		<Button

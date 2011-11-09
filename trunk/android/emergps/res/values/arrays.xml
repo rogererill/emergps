@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<array name="spin_report">
+		<item> Tipus1	</item>
+		<item> Tipus2 	</item>
+		<item> Tipus3	</item>
+		<item> Tipus4 	</item>
+	</array> 
+</resources>
