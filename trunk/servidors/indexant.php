@@ -1,16 +1,32 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<?php 
+	include("util.php");
+	connect_DB();
+	$titul = $_GET['titul'];
+	
+	$sql = "select * from incidencia";
+	$r = mysql_query($sql);
+	$nInc = mysql_num_rows($r);
+	
+?>
+<html>
+<title> emerGPS </title>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>test</title>
-    <style>
-    *{ margin: 0; padding: 0; }
-    html, body{
-        width: 100%;
-        height: 100%;
-        margin: 0px;
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<style type="text/css">
+  html { height: 100% }
+  body { height: 100%; margin: 0; padding: 0 }
+  #map_canvas { height: 100% }
+</style>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;language=es"></script>
+<script type="text/javascript" src="map.js"></script>
+
+
+<style>
+	html,body {
+		margin: 0px;
 		padding: 0px;
-    }
+	}
 	
 	.main {
 		width: 1024px;
@@ -75,17 +91,32 @@
 	  float: left;
 	  text-align: left;
 	}
-    </style>
-    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;language=es"></script>
-    <script type="text/javascript" src="map.js"></script>
+	
+</style>
 </head>
 <body>
-    <div class="main">
+	<div class="main">
 		<div class="main-top">
 			CENTRAL DE BOMBERS <a href="#"> sortir </a>
 		</div>
 		<div class="main-center">
 			<div class="recursos">
+			<?php
+         		$incidencia = mysql_fetch_array($r);
+				echo $incidencia['lat'];
+				echo $incidencia['lng'];
+				echo $incidencia['name'];
+			?>
+			var NOMBRE = <?php echo $nInc?>;
+			var lng = <?php echo $lng?>;
+			var titol = <?php echo $name?>;
+
+				Recursos
+				<?php
+					while($fila=mysql_fetch_array($r)) {
+						echo "<p> Recurs ".$fila['id_recurs'].": disponible </p>";
+					}
+				?>
 			</div>
 			<div class="incidencies">
 				<div class="incidencies-nav">
@@ -94,7 +125,7 @@
 					<div class="incidencia-titol"> I3 </div>
 					<div class="incidencia-titol"> I4 </div>
 				</div>
-				<div id="map"></div>
+				<div id="map_canvas"></div>
 			</div>
 			<div class="info-incidencies">
 				Introdueix nova incidencia
