@@ -1,19 +1,18 @@
 var map;
 var markers = new Array();
+var links = "<form name='form_inc'><select name='incidencies' size=6 onclick='eventLlista_inc(this.selectedIndex)'>";
 
 function initialize() {
-	nInc = 0;
 	var options = {
-		zoom: 5,
+		zoom: 10,
 		center: new google.maps.LatLng(18.470338, -66.123503),
 		mapTypeId: google.maps.MapTypeId.ROADMAP
 	};
 	
 	map = new google.maps.Map(document.getElementById('map'), options);
-	var links = "<form name='form_inc'><select name='incidencies' size=6 onclick='eventLlista_inc(this.selectedIndex)'";
 		
 	for (var i = 0; i < 5; i++) {
-	    var location = new google.maps.LatLng(18.470338+i, -66.123503+i);
+	    var location = new google.maps.LatLng(41.387917+(i/10), 2.169919-(i/10));
       	var title = "<ul><li> Nom incidencia: Incendi Balmes </li> <li> Direccio: c/Balmes 51 </li> <li> Hora inici: 21:45 </li></ul>";
 	    placeRandomMarker(location,title);
 	    links += "<option value="+i+"> Incidencia "+i;
@@ -26,13 +25,10 @@ function initialize() {
   	});
 }
 
-function modificaMapa(centre) {
-	map.setCenter(centre);
-}
 
 function eventLlista_inc(index) {
 	document.getElementById('info').innerHTML = markers[index].title;
-	modificaMapa(markers[index].position);
+	map.setCenter(markers[index].position)
 }
 
 function placeRandomMarker(location,info) {
@@ -55,12 +51,23 @@ function placeRandomMarker(location,info) {
   map.setCenter(location);
 }
 
+function chopLinks(links) {
+	var trobat = false;
+	for (var i = 0; i < links.length && !trobat; i++) {      
+		if (links[i] == "/") return links.substring(0,i-1);
+	}
+}
+
 function crearIncidencia() {
 	var title = document.formCrearInc.titol.value;
 	var lat = document.formCrearInc.lat.value;
 	var lng = document.formCrearInc.lng.value;
 	var location = new google.maps.LatLng(lat,lng);
 	placeRandomMarker(location,title);
+	links = chopLinks(links);
+	links += "<option value=3>"+title+"";
+	links+="</select></form>";
+	document.getElementById("llista_inc").innerHTML = links;
 }
 
 function placeMarker(location) {
@@ -70,7 +77,7 @@ function placeMarker(location) {
   });
   
   var infowindow = new google.maps.InfoWindow({ 
-  	content: "<form name='formCrearInc'><input type='text' name='titol'><input type='hidden' name='lat' value="+location.lat()+"><input type='hidden' name='lng' value="+location.lng()+"><input type='text' name='index' value="+nInc+"><input type='button' value='crear' name='crear' onclick='crearIncidencia()'>",			
+  	content: "<form name='formCrearInc'><input type='text' name='titol'><input type='hidden' name='lat' value="+location.lat()+"><input type='hidden' name='lng' value="+location.lng()+"><input type='button' value='crear' name='crear' onclick='crearIncidencia()'></form>",			
     size: new google.maps.Size(50,50)
   });
     
@@ -79,6 +86,8 @@ function placeMarker(location) {
   });
 
   map.setCenter(location);
+  
+  infowindow.open(map,marker);
 }
 
 /*
