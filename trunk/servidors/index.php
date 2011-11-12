@@ -47,7 +47,7 @@
 		float: left;
 	}
 	
-	.recursos {
+	#llista_inc {
 		width: 172px;
 		height: inherit;
 		float: left;
@@ -107,8 +107,8 @@
 			CENTRAL DE BOMBERS <a href="#"> sortir </a>
 		</div>
 		<div class="main-center">
-			<div class="recursos">
-				<?php echo $name ?>
+			<div id="llista_inc">
+				
 			</div>
 			<div class="incidencies">
 				<div id="incidencies-nav">
