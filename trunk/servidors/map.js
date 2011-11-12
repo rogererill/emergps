@@ -1,6 +1,6 @@
 var map;
-var nInc;
 var markers = new Array();
+
 function initialize() {
 	nInc = 0;
 	var options = {
@@ -10,7 +10,7 @@ function initialize() {
 	};
 	
 	map = new google.maps.Map(document.getElementById('map'), options);
-	var links = "<form name='form_inc'><select name='incidencies' size=5 onclick='eventLlista_inc(this.selectedIndex)'";
+	var links = "<form name='form_inc'><select name='incidencies' size=6 onclick='eventLlista_inc(this.selectedIndex)'";
 		
 	for (var i = 0; i < 5; i++) {
 	    var location = new google.maps.LatLng(18.470338+i, -66.123503+i);
@@ -55,6 +55,14 @@ function placeRandomMarker(location,info) {
   map.setCenter(location);
 }
 
+function crearIncidencia() {
+	var title = document.formCrearInc.titol.value;
+	var lat = document.formCrearInc.lat.value;
+	var lng = document.formCrearInc.lng.value;
+	var location = new google.maps.LatLng(lat,lng);
+	placeRandomMarker(location,title);
+}
+
 function placeMarker(location) {
   var marker = new google.maps.Marker({
       position: location, 
@@ -62,12 +70,10 @@ function placeMarker(location) {
   });
   
   var infowindow = new google.maps.InfoWindow({ 
-  	content: "<form method='post' action='index.php'><input type='text' name='titol'><input type='hidden' name='lat' value="+location.lat()+"><input type='hidden' name='lng' value="+location.lng()+"><input type='text' name='index' value="+nInc+"><input type='submit' name='crear' value='ok'>",			
+  	content: "<form name='formCrearInc'><input type='text' name='titol'><input type='hidden' name='lat' value="+location.lat()+"><input type='hidden' name='lng' value="+location.lng()+"><input type='text' name='index' value="+nInc+"><input type='button' value='crear' name='crear' onclick='crearIncidencia()'>",			
     size: new google.maps.Size(50,50)
   });
-  
-  nInc++; //identificador de la incidencia
-  
+    
   google.maps.event.addListener(marker, 'click', function() {
     infowindow.open(map,marker);
   });
