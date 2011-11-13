@@ -3,6 +3,7 @@ var markers = new Array();
 var links = ""; // onclick='eventLlista_inc(this.selectedIndex)'>";
 var index = 5;
 var bounds = new google.maps.LatLngBounds();
+var geocoder = new google.maps.Geocoder();
 function initialize() {
 	var options = {
 		zoom: 10,
@@ -24,6 +25,35 @@ function initialize() {
 	google.maps.event.addListener(map, 'click', function(event) {
     	placeMarker(event.latLng);
   	});
+}
+
+
+function crearIncidenciaGeocode(location) {
+	var title = document.formGeocode.titolInc.value;
+	
+	//var momentoActual = new Date(); 
+	//var hora = momentoActual.getHours();
+	//var minuto = momentoActual.getMinutes(); 
+	
+	var info = "Nom incidencia: "+title+""; //+" <br> Direccio: - <br> Hora inici: " + hora + ":" + minuto + "</div></a>";
+	
+	placeRandomMarker(location,info);
+	links += "<a href='#'><div class='element_llista' id="+index+" onclick='eventLlista_inc(this.id)'> "+title+"</div></a>";
+	document.getElementById("llista_inc").innerHTML = links;
+	index++;
+}
+
+function codeAddress() { 
+	var sAddress = document.getElementById("inputTextAddress").value;
+	geocoder.geocode( { 'address': sAddress}, function(results, status) {
+		if (status == google.maps.GeocoderStatus.OK) {
+			map.setCenter(results[0].geometry.location);
+			crearIncidenciaGeocode(results[0].geometry.location);
+		}
+		else{
+			alert("Geocode was not successful for the following reason: " + status);
+		}
+	 });
 }
 
 function vista_general() {
