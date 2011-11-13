@@ -29,7 +29,8 @@
 	
     <div class="main">
 		<div class="main-top">
-			<span> EmerGPS</span>
+			<span style="margin-right: 200px;"> EmerGPS</span>
+			<span> <a href="#" onclick="vista_general();"> Mapa general </a> </span>
 			<span style="float: right"> CENTRAL DE BOMBERS <a href="#"> | sortir </a> </span>
 		</div>
 		<div class="main-center">

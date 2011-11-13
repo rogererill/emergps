@@ -1,7 +1,8 @@
 var map;
 var markers = new Array();
-var links = "<span> INCID&Egrave;NCIES</span><form name='form_inc'><select style='overflow: hidden;' name='incidencies' size=6 onclick='eventLlista_inc(this.selectedIndex)'>";
-
+var links = ""; // onclick='eventLlista_inc(this.selectedIndex)'>";
+var index = 5;
+var bounds = new google.maps.LatLngBounds();
 function initialize() {
 	var options = {
 		zoom: 10,
@@ -15,9 +16,9 @@ function initialize() {
 	    var location = new google.maps.LatLng(41.387917+(i/10), 2.169919-(i/10));
       	var title = "<ul><li> Nom incidencia: Incendi Balmes </li> <li> Direccio: c/Balmes 51 </li> <li> Hora inici: 21:45 </li></ul>";
 	    placeRandomMarker(location,title);
-	    links += "<option value="+i+"> Incidencia "+i;
+	    links += "<a href='#'><div class='element_llista' id="+i+" onclick='eventLlista_inc(this.id)'> Incidencia "+i+"</div></a>";
   	}
-  	links+="</select></form>";
+
 	document.getElementById("llista_inc").innerHTML = links;
   	
 	google.maps.event.addListener(map, 'click', function(event) {
@@ -25,10 +26,15 @@ function initialize() {
   	});
 }
 
+function vista_general() {
+	//Ajustar el zoom según los límites
+	map.fitBounds(bounds);
+}
 
 function eventLlista_inc(index) {
 	document.getElementById('info').innerHTML = markers[index].title;
-	map.setCenter(markers[index].position)
+	map.setCenter(markers[index].position);
+	map.setZoom(15);
 }
 
 function placeRandomMarker(location,info) {
@@ -37,6 +43,7 @@ function placeRandomMarker(location,info) {
       map: map,
       title: info
   });
+  bounds.extend(location);
   markers.push(marker);
   var infowindow = new google.maps.InfoWindow({ 
 	content: marker.title,
@@ -51,23 +58,19 @@ function placeRandomMarker(location,info) {
   map.setCenter(location);
 }
 
-function chopLinks(links) {
-	var trobat = false;
-	for (var i = 0; i < links.length && !trobat; i++) {      
-		if (links[i] == "/") return links.substring(0,i-1);
-	}
-}
-
 function crearIncidencia() {
 	var title = document.formCrearInc.titol.value;
+	var info = "Nom incidencia: "+title+" <br> Direccio: - <br> Hora inici: - </div></a>";
 	var lat = document.formCrearInc.lat.value;
 	var lng = document.formCrearInc.lng.value;
 	var location = new google.maps.LatLng(lat,lng);
-	placeRandomMarker(location,title);
-	links = chopLinks(links);
-	links += "<option value=3>"+title+"";
-	links+="</select></form>";
+	placeRandomMarker(location,info);
+	//links = chopLinks(links);
+	//links += "<option value=3>"+title+"";
+	//links+="</select></form>";
+	links += "<a href='#'><div class='element_llista' id="+index+" onclick='eventLlista_inc(this.id)'> "+title+"</div></a>";
 	document.getElementById("llista_inc").innerHTML = links;
+	index++;
 }
 
 function placeMarker(location) {
