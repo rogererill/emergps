@@ -1,6 +1,6 @@
 var map;
 var markers = new Array();
-var links = "<form name='form_inc'><select name='incidencies' size=6 onclick='eventLlista_inc(this.selectedIndex)'>";
+var links = "<span> INCID&Egrave;NCIES</span><form name='form_inc'><select style='overflow: hidden;' name='incidencies' size=6 onclick='eventLlista_inc(this.selectedIndex)'>";
 
 function initialize() {
 	var options = {
