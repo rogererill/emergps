@@ -19,7 +19,7 @@
 	
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>test</title>
+    <title>EmerGPS</title>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;language=es"></script>
     <script type="text/javascript" src="map.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
@@ -46,24 +46,22 @@
 					
 				</div>
 				<div id="geocode">
-					
-				</div>
-				<!--<fieldset>
+					<fieldset>
 					<legend> Incidencia </legend>
+					<form name="formGeocode">
 					<div>
-						<label for="titol"> Titol </label>
-						<input type="text" name="titol" id="titol">
+						<label for="titolInc"> Titol </label>
+						<input type="text" name="titolInc" id="titolInc">
 					</div>
 					
 					<div>
-						<label for="direccio"> Direccio </label>
-						<input type="text" name="direccio" id="direccio">
+						<label for="inputTextAddress"> Adreça </label> 
+						<input type="text" id="inputTextAddress" title="Address to Geocode" />
 					</div>
-					
-					Address: <input type="text" id="inputTextAddress" style=" width:200px" title="Address to Geocode" />
-					<input type="button" onclick="codeAddress()" id="inputButtonGeocode" style="width:150px" title="Click to Geocode" value="Click to Geocode" />
-				
-				</fieldset>-->
+						<input type="button" onclick="codeAddress()" id="inputButtonGeocode" style="width:150px" title="Click to Geocode" value="Click to Geocode" />									
+					</form>
+				</fieldset>
+				</div>
 			</div>
 		</div>
 	</div>	
