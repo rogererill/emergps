@@ -68,10 +68,12 @@ function eventLlista_inc(index) {
 }
 
 function placeRandomMarker(location,info) {
+  var image = 'fire.png';
   var marker = new google.maps.Marker({
       position: location, 
       map: map,
-      title: info
+      title: info,
+      icon: image
   });
   bounds.extend(location);
   markers.push(marker);
@@ -104,9 +106,11 @@ function crearIncidencia() {
 }
 
 function placeMarker(location) {
+  var image = 'fire.png';
   var marker = new google.maps.Marker({
       position: location, 
       map: map,
+      icon: image
   });
   
   var infowindow = new google.maps.InfoWindow({ 

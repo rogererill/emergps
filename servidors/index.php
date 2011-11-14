@@ -1,14 +1,21 @@
 <?php
 	include("util.php");
-	connect_DB();
+	connect_DB_users();
 	
-	if ($_POST['crear']) {
-		$name = $_POST['titol'];
-		$lat = $_POST['lang'];
-		$lng = $_POST['lng'];
-		$sql = "insert into incidencia(name,lat,lng) values ('$name','$lat','$lng')";
+	if ($_POST['accedir']) {
+		$user = $_POST['user'];
+		$pass = $_POST['pass'];
 		
+		$sql = "select * from centrals where nom='$user' and pass='$pass'";
 		$r = mysql_query($sql);
+		
+		if(mysql_num_rows($r) > 0) {
+			$m = "si";
+			$fila = mysql_fetch_array($r);
+			$url = $fila['url'];
+			header ("Location:".$url);
+		}
+		else $m = "no";
 	}
 	
 ?>
@@ -29,39 +36,23 @@
 	
     <div class="main">
 		<div class="main-top">
-			<span style="margin-right: 200px;"> EmerGPS</span>
-			<span> <a href="#" onclick="vista_general();"> Mapa general </a> | </span>
-			<span style="float: right"> CENTRAL DE BOMBERS | <a href="#">  sortir </a> </span>
+			<div style="float: left; margin-right: 200px;"> <span> <?php echo $m. $user. $pass.$url ?> EmerGPS </span> </div>
+			<div style="float: right;"> <span> BOMBERS | POLICIA | AMBUL&Agrave;NCIES </span> </div>
 		</div>
-		<div class="main-center">
-			
-			<div id="llista_inc">
-				
-			</div>
-			<div class="incidencies">
-				<div id="map"></div>
-			</div>
-			<div class="info-incidencies">
-				<div id="info">
-					
-				</div>
-				<div id="geocode">
-					<fieldset>
-					<legend> Incidencia </legend>
-					<form name="formGeocode">
+		<div class="main-center-login">
+			<div style="margin: 0px auto; width: 200px; height: 200px;"> 
+				<form name="login" method="post" action="index.php">
 					<div>
-						<label for="titolInc"> Titol </label>
-						<input type="text" name="titolInc" id="titolInc">
+						<label for="user"> Usuari </label>
+						<input type="text" name="user" id="user">
 					</div>
 					
 					<div>
-						<label for="inputTextAddress"> Adreça </label> 
-						<input type="text" id="inputTextAddress" title="Address to Geocode" />
+						<label for="pass"> Password </label> 
+						<input type="pass" id="pass" name="pass"/>
 					</div>
-						<input type="button" onclick="codeAddress()" id="inputButtonGeocode" style="width:150px" title="Click to Geocode" value="Click to Geocode" />									
+						<input style="margin-top: 20px;width: 154px;" name="accedir" type="submit" value="Accedir" />									
 					</form>
-				</fieldset>
-				</div>
 			</div>
 		</div>
 	</div>	

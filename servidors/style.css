@@ -6,7 +6,7 @@
 	
 	.main {
 		width: 1024px;
-		height: 900px;
+		height: 650px;
 		margin: 0px auto;
 	}
 	
@@ -118,4 +118,25 @@
 	a:hover {
 		text-decoration: underline;	
 	}
+	
+	.not_img {
+		position: relative; 
+		top: -6px; 
+		width: 32px; 
+		height: 37px; 
+		background: url(fire.png);
 	}
+	
+	.notificacion a:hover .not_img {
+		background: url(fire_hover2.png) 0 top no-repeat;
+ 	}
+ 	
+ 	.main-center-login {
+ 		padding-top:75px;
+ 		margin: 0px auto;
+ 		width: 500px;
+		height: 200px;
+		border: 1px solid #3D94D8;
+ 	}
+ 	
+
