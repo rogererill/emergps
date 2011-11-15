@@ -10,12 +10,10 @@
 		$r = mysql_query($sql);
 		
 		if(mysql_num_rows($r) > 0) {
-			$m = "si";
 			$fila = mysql_fetch_array($r);
 			$url = $fila['url'];
 			header ("Location:".$url);
 		}
-		else $m = "no";
 	}
 	
 ?>
@@ -36,7 +34,7 @@
 	
     <div class="main">
 		<div class="main-top">
-			<div style="float: left; margin-right: 200px;"> <span> <?php echo $m. $user. $pass.$url ?> EmerGPS </span> </div>
+			<div style="float: left; margin-right: 200px;"> <span> EmerGPS </span> </div>
 			<div style="float: right;"> <span> BOMBERS | POLICIA | AMBUL&Agrave;NCIES </span> </div>
 		</div>
 		<div class="main-center-login">
