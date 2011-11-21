@@ -9,6 +9,49 @@ var markerG;
 var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
 var recursos = new Array();
+var id_actual = 30000;
+
+function timeMsg() {
+	//var t=setTimeout("alertMsg()",3000);
+	var t = setTimeout("mouRecursos()",2000);
+}
+
+function mouRecursos() {
+	for (var i = 0; i < 2; i++) {
+		mouRecurs(i);
+	}
+}	
+
+function mouRecurs(pos) {
+	
+	var location = recursos[pos].getPosition();
+	
+	recursos[pos].setPosition(new google.maps.LatLng(location.lat()+0.1*Math.random(), location.lng()-0.1*Math.random()));
+	
+	var location2 = recursos[pos].getPosition();
+	
+	var text = "primera posicio: " + location.lat() + ", " + location.lng() + ". I segona posicio: " + location2.lat() + ", " + location2.lng();
+	document.getElementById("info").innerHTML = text;
+	//var t = setTimeout("mouRecursos()",2000);
+}
+
+function alertMsg() {
+	
+	if (Math.random() > 0.5) {
+	var title = "fetaAmbTimer";
+	var tIni = horaActual();
+	var info = creaInfo(title,"-",tIni);
+	var location = new google.maps.LatLng(41.387917-Math.random(), 2.169919+Math.random()); 
+	
+	placeRandomMarker(location,info);
+	updateLinks(title);
+	index++;
+	
+	alert("Hello");
+	
+	}
+	var t=setTimeout("alertMsg()",3000);
+}
 
 function initialize() {
 	directionsDisplay = new google.maps.DirectionsRenderer();
@@ -26,6 +69,41 @@ function initialize() {
 	google.maps.event.addListener(map, 'click', function(event) {
     	placeMarker(event.latLng);
   	});
+  	map.fitBounds(bounds);
+  	var text = "";
+  	for (var i = 0; i < recursos.length; i++) {
+  		text += recursos[i].getTitle();
+  	}
+  	document.getElementById("info").innerHTML = text;
+  	//timeMsg();
+}
+
+function calculateDistance() {
+	try {
+			var location1 = new google.maps.LatLng(39.99742423181819, 3.8307711482048035);  	
+			var location2 = new google.maps.LatLng(39.997206425976294, 3.8302507996559143);  	
+		
+			var miledistance = location1.distanceFrom(location2, 3959).toFixed(1);
+			var kmdistance = (miledistance * 1.609344).toFixed(1);
+ 
+			document.getElementById('info').innerHTML = '<strong>Distance: </strong>' + miledistance + ' miles (or ' + kmdistance + ' kilometers)';
+		}
+	catch (error) {
+		alert(error);
+	}
+}
+
+function placeRecurs(location) {
+  var image = 'cotxe_bombers.png';
+  var recurs = new google.maps.Marker({
+      position: location, 
+      map: map,
+      icon: image,
+      title: id_actual+""
+  });
+  id_actual++;
+  bounds.extend(location);
+  recursos.push(recurs);
 }
 
 function randomIncidencies() {
@@ -46,6 +124,10 @@ function randomIncidencies() {
 function randomRecursos() {
 	for (var i = 0; i < 6; i++) {
 		var location = new google.maps.LatLng(41.387917+(i/32)+Math.random()/3, 1.5-(i/64)+Math.random()/3);
+		/*var recurs = {
+			pos: location,
+			id: id
+		};*/
 		placeRecurs(location);
 	}
 }
@@ -126,18 +208,6 @@ function eventLlista_inc(index) {
 	document.getElementById('info').innerHTML = markers[index].title;
 	map.setCenter(markers[index].position);
 	map.setZoom(15);
-}
-
-function placeRecurs(location) {
-  var image = 'cotxe_bombers.png';
-  var recurs = new google.maps.Marker({
-      position: location, 
-      map: map,
-      icon: image
-  });
-
-  bounds.extend(location);
-  recursos.push(recurs);
 }
 
 //el nom pot crear confusio, no es crear un marker a una posicio random, sino que es posa a la posicio
