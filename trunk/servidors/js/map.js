@@ -10,6 +10,7 @@ var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
 var recursos = new Array();
 var id_actual = 30000;
+var distancies = new Array();
 
 function timeMsg() {
 	//var t=setTimeout("alertMsg()",3000);
@@ -78,7 +79,65 @@ function initialize() {
   	//timeMsg();
 }
 
-function calculateDistance() {
+function minDistancia() {
+		
+	var min = distancies[0];
+	var index = 0;
+	
+	for (var i = 1; i < distancies.length; i++) {
+		if (distancies[i].dist < min.dist) {
+			min = distancies[i];
+			index = i;
+		}
+	}
+	
+	distancies.splice(index,1);
+		
+	return min.id;
+}
+
+
+function threeMinDist() {
+	
+	var r1 = {
+		id: 1,
+		dist: 6
+	};
+	
+	var r2 = {
+		id: 2,
+		dist: 1
+	};
+	
+	var r3 = {
+		id: 3,
+		dist: 0
+	};
+	
+	var r4 = {
+		id: 4,
+		dist: 9
+	};
+	
+	distancies.push(r1,r2,r3,r4);
+	
+	var min1 = minDistancia();
+	var min2 = minDistancia();
+	var min3 = minDistancia();
+	document.getElementById("info").innerHTML = "les menors distancies son: "+ min1 + ", " + min2 + ", " + min3;
+}
+
+function distRecursos() {
+	var posIncidencia = new google.maps.LatLng(41.387917, 2.169919);
+	
+	var dist = calculateDistance(posIncidencia,recursos[0].getPosition());
+		//distancies.push(dist);
+		
+	
+	document.getElementById("info").innerHTML = "<span>" + dist +"</span>";
+}
+
+function calculateDistance(location1, location2) {
 	directionsService = new google.maps.DirectionsService();
 	directionsDisplay = new google.maps.DirectionsRenderer(
 	{
@@ -87,8 +146,11 @@ function calculateDistance() {
 	});
 	directionsDisplay.setMap(map);
 	
-	var location1 = new google.maps.LatLng(39.99742423181819, 3.8307711482048035);  	
-	var location2 = new google.maps.LatLng(39.997206425976294, 3.8302507996559143);  
+	//var location1 = new google.maps.LatLng(39.99742423181819, 3.8307711482048035);  	
+	//var location2 = new google.maps.LatLng(39.99720642597629,  3.8302507996559143);  
+	
+	//var location1 = new google.maps.LatLng(41.387917, 2.169919);  	//barcelona
+	//var location2 = new google.maps.LatLng(40.416691, -3.700345);  //madrid
 	
 	var request = {
 	   origin:location1,
@@ -100,10 +162,13 @@ function calculateDistance() {
 	   if (status == google.maps.DirectionsStatus.OK)
 	   {
 	      directionsDisplay.setDirections(response);
-	      distance = "The distance between the two points on the chosen route is: "+response.routes[0].legs[0].distance.text;
-	      distance += "The aproximative driving time is: "+response.routes[0].legs[0].duration.text;
-	      document.getElementById("info").innerHTML = distance;
-	   }
+	      distance = response.routes[0].legs[0].distance.text;
+	      //distance += "The aproximative driving time is: "+response.routes[0].legs[0].duration.text;
+	      //document.getElementById("info").innerHTML = distance;
+	      alert(distance);
+	      return distance;
+	   } 
+	   else alert("Error al calcular distancia");
 	});
 }
 

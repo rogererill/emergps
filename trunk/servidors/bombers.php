@@ -62,6 +62,7 @@
 					</div>
 						<input type="button" onclick="codeAddress()" id="inputButtonGeocode" style="width:150px" title="Click to Geocode" value="Click to Geocode" />									
 						<input type="button" onclick="calculateDistance()" id="moure" style="width:150px" title="moure" value="distancia" />												
+						<input type="button" onclick="distRecursos()" id="min" style="width:150px" title="min" value="min" />												
 					</form>
 				</fieldset>
 				</div>
