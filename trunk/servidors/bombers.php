@@ -1,6 +1,6 @@
 <?php
 	include("inc/util.php");
-	connect_DB();
+	//connect_DB();
 	
 	if ($_POST['crear']) {
 		$name = $_POST['titol'];
