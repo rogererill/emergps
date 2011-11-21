@@ -1,0 +1,114 @@
+URLS
+
+http://roger90.no-ip.org/HelloWorld/resources/emergps/env_pos
+http://roger90.no-ip.org/HelloWorld/resources/emergps
+
+
+HttpClient httpclient = new DefaultHttpClient();  
+      
+       HttpGet request = new HttpGet(URL+"/env_pos");
+       
+       request.addHeader("id", id);
+       
+       result = httpclient.execute(request, handler);
+creo un objecte httpClient
+
+id unitats: 1xxxx poli
+			2xxxx ambulancies
+			3xxxx bombers
+	
+	
+/************************ exemple1 ************************************/
+
+			
+$.ajax({
+    url: 'http://example.com/',
+    type: 'PUT',
+    data: 'ID=1&Name=John&Age=10', // or $('#myform').serializeArray()
+    success: function() { alert('PUT completed'); }
+});
+
+/************************ exemple2 ************************************/
+
+var url = "http://host/path/to/resource";
+var representationOfDesiredState = "The cheese is old and moldy, where is the bathroom?";
+
+var client = new XMLHttpRequest();
+
+client.open("PUT", url, false);
+
+client.setRequestHeader("Content-Type", "text/plain");
+
+client.send(representationOfDesiredState);
+
+if (client.status == 200)
+    alert("The request succeeded!\n\nThe response representation was:\n\n" + client.responseText)
+else
+    alert("The request did not succeed!\n\nThe response status was: " + client.status + " " + client.statusText + ".");
+    
+/************************ exemple3 ************************************/
+
+!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script language="javascript">
+    var xmlhttp;
+    function init() {
+       // put more code here in case you are concerned about browsers that do not provide XMLHttpRequest object directly
+       xmlhttp = new XMLHttpRequest();
+    }
+    function getdetails() {
+        var empno = document.getElementById("empno");
+        var url = "http://localhost:8084/webservicedemo/resources/employee/" + empno.value;
+        xmlhttp.open('GET',url,true);
+        xmlhttp.send(null);
+        xmlhttp.onreadystatechange = function() {
+
+               var empname =  document.getElementById("empname");
+               var age =  document.getElementById("age");
+               if (xmlhttp.readyState == 4) {
+                  if ( xmlhttp.status == 200) {
+                       var det = eval( "(" +  xmlhttp.responseText + ")");
+                       if (det.age > 0 ) {
+                          empname.value = det.name;
+                          age.value = det.age;
+                       }
+                       else {
+                           empname.value = "";
+                           age.value ="";
+                           alert("Invalid Employee ID");
+                       }
+                 }
+                 else
+                       alert("Error ->" + xmlhttp.responseText);
+              }
+        };
+    }
+  </script>
+  </head>
+  <body  onload="init()">
+   <h1>Call Employee Service </h1>
+   <table>
+   <tr>
+       <td>Enter Employee ID :  </td>
+       <td><input type="text" id="empno" size="10"/>  <input type="button" value="Get Details" onclick="getdetails()"/>
+   </tr>
+   <tr>
+       <td>Enter Name :  </td>
+       <td><input type="text" readonly="true" id="empname" size="20"/> </td>
+   </tr>
+
+   <tr>
+       <td>Employee Age : </td>
+       <td><input type="text" readonly="true" id="age" size="10"/> </td>
+   </tr>
+   </table>
+  </body>
+</html>
+
+/************************ exemple3 ************************************/
+
+
+    
