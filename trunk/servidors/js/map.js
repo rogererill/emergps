@@ -79,18 +79,32 @@ function initialize() {
 }
 
 function calculateDistance() {
-	try {
-			var location1 = new google.maps.LatLng(39.99742423181819, 3.8307711482048035);  	
-			var location2 = new google.maps.LatLng(39.997206425976294, 3.8302507996559143);  	
-		
-			var miledistance = location1.distanceFrom(location2, 3959).toFixed(1);
-			var kmdistance = (miledistance * 1.609344).toFixed(1);
- 
-			document.getElementById('info').innerHTML = '<strong>Distance: </strong>' + miledistance + ' miles (or ' + kmdistance + ' kilometers)';
-		}
-	catch (error) {
-		alert(error);
-	}
+	directionsService = new google.maps.DirectionsService();
+	directionsDisplay = new google.maps.DirectionsRenderer(
+	{
+	   suppressMarkers: true,
+	   suppressInfoWindows: true
+	});
+	directionsDisplay.setMap(map);
+	
+	var location1 = new google.maps.LatLng(39.99742423181819, 3.8307711482048035);  	
+	var location2 = new google.maps.LatLng(39.997206425976294, 3.8302507996559143);  
+	
+	var request = {
+	   origin:location1,
+	   destination:location2,
+	   travelMode: google.maps.DirectionsTravelMode.DRIVING
+	};
+	directionsService.route(request, function(response, status)
+	{
+	   if (status == google.maps.DirectionsStatus.OK)
+	   {
+	      directionsDisplay.setDirections(response);
+	      distance = "The distance between the two points on the chosen route is: "+response.routes[0].legs[0].distance.text;
+	      distance += "The aproximative driving time is: "+response.routes[0].legs[0].duration.text;
+	      document.getElementById("info").innerHTML = distance;
+	   }
+	});
 }
 
 function placeRecurs(location) {
