@@ -1,5 +1,5 @@
 <?php
-	include("util.php");
+	include("inc/util.php");
 	connect_DB_users();
 	
 	if ($_POST['accedir']) {
@@ -26,8 +26,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>EmerGPS</title>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;language=es"></script>
-    <script type="text/javascript" src="map.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
 
 <body onload="initialize()">
