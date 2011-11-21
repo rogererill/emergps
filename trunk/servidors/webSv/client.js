@@ -1,5 +1,12 @@
    var http_request = false;
+   
+	function get() {
+		makePOSTRequest('GET',"http://roger90.no-ip.org/HelloWorld/resources/emergps/env_pos","manolo"); 
+		makePOSTRequest('GET',"http://83.60.112.150:8080/HelloWorld/resources/emergps/env_pos_web/20001","4");   
+  	}	
+   
    function makePOSTRequest(method,url, parameters) {
+      
       http_request = false;
       if(window.XMLHttpRequest) { // Mozilla, Safari,...
          http_request = new XMLHttpRequest();
@@ -18,7 +25,7 @@
      // http_request.open(method, url, true);
 
      if(method=='GET'){
-                 http_request.open(method, url+parameters, true);
+                 http_request.open(method, url+parameters, true); //l'ultim parametre indica si la crida es sincrona o asincrona, per tant hauria de ser sincrona a no ser que utilitzem ajax...
                  http_request.setRequestHeader("Content-type", "text/xml");
                  http_request.setRequestHeader("Content-length", parameters.length);
                  http_request.setRequestHeader("Connection", "close");
@@ -48,10 +55,13 @@
 	}
 
 function alertContents() {
-   if (http_request.readyState == 4) {
+  /* if (http_request.readyState == 4) {
       if (http_request.status == 200) {
-        alert('Response received from server:\n'+http_request.responseText);
+        alert('Response received from server:\n'+http_request.responseText);*/
         result = http_request.responseText;
+        
+        document.getElementById('serverresponse').innerHTML = result; /*
+        
    // Turn < and > into &lt; and &gt; for displaying on the page.
         result = result.replace(/\<([^!])/g, '&lt;$1');
         result = result.replace(/([^-])\>/g, '$1&gt;');
@@ -60,7 +70,7 @@ function alertContents() {
       alert('There was a problem with the request.' 
                     +http_request.responseText +' '+http_request.status);
       document.getElementById('serverresponse').innerHTML = http_request.responseText;
-      }
+      }*/
    }
 }
    
