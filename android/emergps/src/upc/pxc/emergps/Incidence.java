@@ -3,7 +3,6 @@ package upc.pxc.emergps;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.content.Intent;
@@ -12,6 +11,7 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
+import com.google.android.maps.Overlay;
 
 public class Incidence extends MapActivity {
    private MapView map;
@@ -23,6 +23,8 @@ public class Incidence extends MapActivity {
       setContentView(R.layout.incidence);
       initMapView();
       initMyLocation();
+      initIncidence();
+      initSupportStaff();
    }
 
 
@@ -46,7 +48,17 @@ public class Incidence extends MapActivity {
       });
       map.getOverlays().add(overlay);
    }
+   
+   private void initIncidence(){
 
+	   
+   }
+
+   private void initSupportStaff(){
+	   
+	   
+   }
+   
    @Override
    protected boolean isRouteDisplayed() {
       // Required by MapActivity
