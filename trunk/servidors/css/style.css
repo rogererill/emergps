@@ -12,7 +12,7 @@
 	
 	@font-face{
 	   font-family:"PtSans";
-	   src:url(PTS55F.ttf) format("opentype");
+	   src:url(../fonts/PTS55F.ttf) format("opentype");
 	}
 	
 	.main-top {
@@ -124,11 +124,11 @@
 		top: -6px; 
 		width: 32px; 
 		height: 37px; 
-		background: url(fire.png);
+		background: url(../img/fire.png);
 	}
 	
 	.notificacion a:hover .not_img {
-		background: url(fire_hover2.png) 0 top no-repeat;
+		background: url(../img/fire_hover2.png) 0 top no-repeat;
  	}
  	
  	.main-center-login {
