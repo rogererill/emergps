@@ -1,8 +1,11 @@
 package upc.pxc.emergps;
 
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
 import android.util.Log;
 
-public class AutentificationTask implements Runnable {
+public class AutentificationTask extends Service implements Runnable {
 
 	private final Emergps emergps;
 	private final String user, pass;
@@ -18,7 +21,7 @@ public class AutentificationTask implements Runnable {
 	public void run() {
 		// TODO Auto-generated method stub
 		
-		emergps.resultAutent(autentServer(user,pass));
+		//emergps.resultAutent(autentServer(user,pass));
 	}
 
 	private boolean autentServer(String user, String pass){
@@ -32,5 +35,11 @@ public class AutentificationTask implements Runnable {
 		}
 		if(user.equals("abc") && pass.equals("abc"))	return true;
 		return false;
+	}
+
+	@Override
+	public IBinder onBind(Intent arg0) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

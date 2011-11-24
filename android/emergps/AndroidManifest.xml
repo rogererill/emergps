@@ -18,6 +18,8 @@
 
         <activity android:name=".Menu"
                   android:label="@string/app_name" />
+        <activity android:name=".Autent"
+                  android:label="@string/app_name" />
         <activity android:name=".Report"
                   android:label="@string/app_name" />
         <activity android:name=".Incidence"
@@ -27,7 +29,12 @@
         <activity android:name=".Error"
                   android:label="@string/app_error"
                   android:theme="@android:style/Theme.Dialog" />
+                  
+        <service android:name=".ComService" />
+                  
     </application>
+    
+
     
        		<uses-permission
         	 android:name="android.permission.ACCESS_COARSE_LOCATION" />
