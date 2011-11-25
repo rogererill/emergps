@@ -14,6 +14,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -27,11 +28,17 @@ public class ComService extends Service implements Runnable{
 	String URL = "http://roger90.no-ip.org/HelloWorld/resources/emergps";  
 		final String TAG = "ComService";
 		private int id = -1;
+		private boolean incid = false;
 		 private final IBinder mBinder = new LocalBinder();
 		 private Handler handler = new Handler();
 		 public static final String COUNTERKEY = "countervalue";
-		 public static final String MYOWNACTIONFILTER = "upc.pxc.emergps.intent.filter";
-
+		 public static final String POS_FILTER = "upc.pxc.emergps.filter.pos";
+		 public static final String DADES_FILTER = "upc.pxc.emergps.filter.dades";
+		 public static final String DADES_EXTRA = "dades"; 
+		 private static final int TIME_ENV_POS = 5000;
+		 private static final int TIME_DADES_INC = 10000;
+		 private String dades = "";
+		 
 		@Override
 		public IBinder onBind(Intent intent) {
 			return mBinder; // object of the class that implements Service
@@ -48,22 +55,43 @@ public class ComService extends Service implements Runnable{
 	      @Override
 	      public void onCreate() {
 	            super.onCreate();
+	            final Runnable r = this;
 	            
-	            Thread t = new Thread() {
+	            Thread env_pos = new Thread() {		// THREAD ENV POS
 	            	public void run(){
 	            		while(true){
-		            		//enviaPos();
-	            			
+	            			/*
+		            		if(enviaPos()){
+	            				handler.post(r);
+	            				incid = true;
+	            			}*/
 		            		try {
-								Thread.sleep(10000);
+								Thread.sleep(TIME_ENV_POS);
 							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 	            		}
 	            	}
 	            };
-	            t.start();
+	            env_pos.start();
+	            
+	            Thread dades_inc = new Thread(){
+	            	public void run(){
+	            		while(true){
+	            			if(incid){
+	            				dades = actIncid();
+	            				handler.post(r);
+	            			}
+		            		try {
+								Thread.sleep(TIME_DADES_INC);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+	            		}
+	            		
+	            	}
+	            };
+	            dades_inc.start();
 	      }
 	      
 	      @Override
@@ -120,7 +148,6 @@ public class ComService extends Service implements Runnable{
 	    		  
 	    		  
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	    	  id = Integer.parseInt(result);
@@ -152,25 +179,61 @@ public class ComService extends Service implements Runnable{
 		    		        Log.i(TAG, result);  
 
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		    	 boolean ret = false;
 		    	 //ret = result.equals("1");
+		    	 // TODO Retornar true si hi ha una nova incidència
 	    	  return ret;
+	      }
+	      
+	      public String actIncid(){
+		  		String result = "0";
+		    	  try {
+		    		  
+		    		        HttpClient httpclient = new DefaultHttpClient();  
+		    		       
+		    		        HttpGet request = new HttpGet(URL+"/inc_act");
+		    		        request.addHeader("id", Integer.toString(id));
+		    				
+		    		        ResponseHandler<String> handler = new BasicResponseHandler();  
+		    		        try {  
+		    		        	
+		    		            result = httpclient.execute(request, handler);  
+		    		        } catch (ClientProtocolException e) {  
+		    		            e.printStackTrace();  
+		    		        } catch (IOException e) {  
+		    		            e.printStackTrace();  
+		    		        }  
+		    		        httpclient.getConnectionManager().shutdown();  
+		    		        Log.i(TAG, result);  
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+	    	  return result;
 	      }
 	      
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
-			broadCast();
+			broadCastPos();
+			if(incid) broadCastDades();
 		}
 	      
-		private void broadCast(){
+		private void broadCastPos(){
 			Intent intent = new Intent();
-			intent.setAction(MYOWNACTIONFILTER); //Define intent-filter
+			intent.setAction(POS_FILTER); //Define intent-filter
 			intent.putExtra("SERVICE", "PROVA");
 			sendBroadcast(intent);
-			//handler.postDelayed(this, 1*1000);
+			
+		}
+		
+		private void broadCastDades(){
+			Intent intent = new Intent();
+			intent.putExtra(DADES_EXTRA, dades);
+			intent.setAction(DADES_FILTER); //Define intent-filter
+			intent.putExtra("SERVICE", "PROVA");
+			sendBroadcast(intent);
+			
 		}
 	}

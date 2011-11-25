@@ -74,7 +74,6 @@ public class Menu extends Activity implements OnClickListener{
 			startActivity(i);
 		break;
 		case(R.id.log_label):
-
 			i = new Intent(this, Logs.class);
 			startActivity(i);	
 		break;
@@ -96,14 +95,14 @@ public class Menu extends Activity implements OnClickListener{
         
 	}
 	
-    private BroadcastReceiver myReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver myReceiverPos = new BroadcastReceiver() {
 		
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			//Bundle extras = intent.getExtras();
 			//int id = extras.getInt();
-			Log.d("onReceive", "REBUT!");
-			
+			Log.d(TAG, "REBUT!");
+			//TODO POSAR COLORS!!!!!!! AL BOTO SOBRE NOVA INCIDÈNCIA
 		}
 	};
 	
@@ -130,13 +129,13 @@ public class Menu extends Activity implements OnClickListener{
 
     boolean reg = false;
     private void doRegister(){
-    	IntentFilter filter = new IntentFilter(mBoundService.MYOWNACTIONFILTER);
-    	registerReceiver(myReceiver, filter);
+    	IntentFilter filter = new IntentFilter(mBoundService.POS_FILTER);
+    	registerReceiver(myReceiverPos, filter);
     	reg = true;
     }
     
     private void doUnRegister(){
-    	unregisterReceiver(myReceiver);
+    	unregisterReceiver(myReceiverPos);
     	reg = false;
     }
     
