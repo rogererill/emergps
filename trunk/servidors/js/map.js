@@ -11,6 +11,8 @@ var directionsService = new google.maps.DirectionsService();
 var recursos = new Array();
 var id_actual = 30000;
 var distancies = new Array();
+var dist_actual;
+var pos = 0;
 
 function timeMsg() {
 	//var t=setTimeout("alertMsg()",3000);
@@ -76,26 +78,27 @@ function initialize() {
   		text += recursos[i].getTitle();
   	}
   	document.getElementById("info").innerHTML = text;
+  	distancies.push(9999999);
+  	distancies.push(9999998);
+  	distancies.push(9999997);
   	//timeMsg();
 }
 
-function minDistancia() {
+function maxDistancia() {
 		
-	var min = distancies[0];
+	var max = distancies[0];
 	var index = 0;
 	
 	for (var i = 1; i < distancies.length; i++) {
-		if (distancies[i].dist < min.dist) {
-			min = distancies[i];
+		if (distancies[i] > max) {
+			max = distancies[i];
 			index = i;
 		}
 	}
-	
-	distancies.splice(index,1);
-		
-	return min.id;
+	//alert("la maxima distancia es "+ index);
+	//distancies.splice(index,1);	
+	return index;
 }
-
 
 function threeMinDist() {
 	
@@ -129,22 +132,13 @@ function threeMinDist() {
 
 function distRecursos() {
 	var posIncidencia = new google.maps.LatLng(41.387917, 2.169919);
-	
-	var dist = calculateDistance(posIncidencia,recursos[0].getPosition());
-		//distancies.push(dist);
-		
-	
-	document.getElementById("info").innerHTML = "<span>" + dist +"</span>";
+	calculateDistance(posIncidencia,recursos[pos].getPosition());
+	pos++;
 }
 
 function calculateDistance(location1, location2) {
 	directionsService = new google.maps.DirectionsService();
-	directionsDisplay = new google.maps.DirectionsRenderer(
-	{
-	   suppressMarkers: true,
-	   suppressInfoWindows: true
-	});
-	directionsDisplay.setMap(map);
+	
 	
 	//var location1 = new google.maps.LatLng(39.99742423181819, 3.8307711482048035);  	
 	//var location2 = new google.maps.LatLng(39.99720642597629,  3.8302507996559143);  
@@ -157,19 +151,52 @@ function calculateDistance(location1, location2) {
 	   destination:location2,
 	   travelMode: google.maps.DirectionsTravelMode.DRIVING
 	};
+	
 	directionsService.route(request, function(response, status)
 	{
 	   if (status == google.maps.DirectionsStatus.OK)
 	   {
-	      directionsDisplay.setDirections(response);
-	      distance = response.routes[0].legs[0].distance.text;
+	   	  
+	      
+	      var distance = response.routes[0].legs[0].distance;
+	      if (afegeixDistancia(distance.value)) {
+	      	directionsDisplay = new google.maps.DirectionsRenderer(
+			{
+			   suppressMarkers: true,
+			   suppressInfoWindows: true
+			});
+		  directionsDisplay.setDirections(response);
+		  directionsDisplay.setMap(map);
+	      }
 	      //distance += "The aproximative driving time is: "+response.routes[0].legs[0].duration.text;
-	      //document.getElementById("info").innerHTML = distance;
-	      alert(distance);
-	      return distance;
+	      document.getElementById("info").innerHTML = distance.value;
+	      
+	      
 	   } 
 	   else alert("Error al calcular distancia");
 	});
+}
+
+function afegeixDistancia(distancia) {
+	if (distancies.length < 3) {
+		distancies.push(distancia);
+		return true;
+	}
+	else {
+		return min3Dists(distancia);
+	}
+}
+
+function min3Dists(distancia) {
+	if (distancies[maxDistancia()] > distancia) {
+		distancies[maxDistancia()]  = distancia;
+		return true;
+	}
+	return false;
+}
+
+function showRoute() {
+	for (var i = 0; i < distancies.length; i++) alert(distancies[i]);
 }
 
 function placeRecurs(location) {
