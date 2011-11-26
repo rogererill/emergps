@@ -13,6 +13,7 @@ var id_actual = 30000;
 var distancies = new Array();
 var dist_actual;
 var pos = 0;
+var rutes = new Array();
 
 function timeMsg() {
 	//var t=setTimeout("alertMsg()",3000);
@@ -78,9 +79,9 @@ function initialize() {
   		text += recursos[i].getTitle();
   	}
   	document.getElementById("info").innerHTML = text;
-  	distancies.push(9999999);
-  	distancies.push(9999998);
-  	distancies.push(9999997);
+  	//distancies.push(9999999);
+  	//distancies.push(9999998);
+  	//distancies.push(9999997);
   	//timeMsg();
 }
 
@@ -132,8 +133,7 @@ function threeMinDist() {
 
 function distRecursos() {
 	var posIncidencia = new google.maps.LatLng(41.387917, 2.169919);
-	calculateDistance(posIncidencia,recursos[pos].getPosition());
-	pos++;
+	for (var i = 0; i < recursos.length; i++) calculateDistance(posIncidencia,recursos[i].getPosition());
 }
 
 function calculateDistance(location1, location2) {
@@ -154,24 +154,31 @@ function calculateDistance(location1, location2) {
 	
 	directionsService.route(request, function(response, status)
 	{
-	   if (status == google.maps.DirectionsStatus.OK)
-	   {
-	   	  
-	      
-	      var distance = response.routes[0].legs[0].distance;
-	      if (afegeixDistancia(distance.value)) {
-	      	directionsDisplay = new google.maps.DirectionsRenderer(
-			{
-			   suppressMarkers: true,
-			   suppressInfoWindows: true
-			});
-		  directionsDisplay.setDirections(response);
-		  directionsDisplay.setMap(map);
-	      }
+		if (status == google.maps.DirectionsStatus.OK)
+	   	{   
+			var distance = response.routes[0].legs[0].distance;
+			var durada = response.routes[0].legs[0].duration;
+			//alert ("la durada es " + durada.value);
+	      	var pos = afegeixDistancia(durada.value);
+	      	if (pos != -1) {
+	      		directionsDisplay = new google.maps.DirectionsRenderer(
+				{
+			   		suppressMarkers: true,
+			   		suppressInfoWindows: true
+				});
+		  		directionsDisplay.setDirections(response);
+			  	if (pos == -2) {
+			  		rutes.push(directionsDisplay);
+			  		//alert("ha tret -2");
+			  	}
+			  	else {
+			  		rutes[pos] = directionsDisplay;
+					//alert("ha tret guai");
+				}
+			}
+			//else alert("ha tret -1");
 	      //distance += "The aproximative driving time is: "+response.routes[0].legs[0].duration.text;
-	      document.getElementById("info").innerHTML = distance.value;
-	      
-	      
+	      document.getElementById("info").innerHTML = distance.value;	      
 	   } 
 	   else alert("Error al calcular distancia");
 	});
@@ -180,7 +187,7 @@ function calculateDistance(location1, location2) {
 function afegeixDistancia(distancia) {
 	if (distancies.length < 3) {
 		distancies.push(distancia);
-		return true;
+		return -2;
 	}
 	else {
 		return min3Dists(distancia);
@@ -189,14 +196,14 @@ function afegeixDistancia(distancia) {
 
 function min3Dists(distancia) {
 	if (distancies[maxDistancia()] > distancia) {
-		distancies[maxDistancia()]  = distancia;
-		return true;
+		distancies[maxDistancia()] = distancia;
+		return maxDistancia();
 	}
-	return false;
+	return -1;
 }
 
 function showRoute() {
-	for (var i = 0; i < distancies.length; i++) alert(distancies[i]);
+	for (var i = 0; i < rutes.length; i++) rutes[i].setMap(map);
 }
 
 function placeRecurs(location) {
