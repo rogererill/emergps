@@ -22,6 +22,7 @@
     <title>EmerGPS</title>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;language=es"></script>
     <script type="text/javascript" src="js/map.js"></script>
+    <script type="text/javascript" src="js/abaaso-min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
 
@@ -63,6 +64,8 @@
 						<input type="button" onclick="codeAddress()" id="inputButtonGeocode" style="width:150px" title="Click to Geocode" value="Click to Geocode" />									
 						<input type="button" onclick="showRoute()" id="moure" style="width:150px" title="moure" value="distancia" />												
 						<input type="button" onclick="distRecursos()" id="min" style="width:150px" title="min" value="min" />												
+						<input type="button" onclick="proves()" id="pos" style="width:150px" title="pos" value="pos" />												
+						<input type="button" onclick="cridar()" id="cr" style="width:150px" title="cr" value="crida" />												
 					</form>
 				</fieldset>
 				</div>
