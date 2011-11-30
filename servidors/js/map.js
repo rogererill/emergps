@@ -10,11 +10,13 @@ var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
 var recursos = new Array();
 var recursos_ocupats = new Array();
-var id_actual = 30000;
+var id_actual = 10000;
 var distancies = new Array();
 var dist_actual;
 var pos = 0;
 var rutes = new Array();
+
+var resultat_distancies = "";
 
 function timeMsg() {
 	//var t=setTimeout("alertMsg()",3000);
@@ -22,10 +24,45 @@ function timeMsg() {
 }
 
 function mouRecursos() {
-	for (var i = 0; i < 2; i++) {
-		mouRecurs(i);
-	}
+	var posic = new Array();
+	posic = getPosicions();
+	alert(posic);
+	//for (var i = 0; i < recursos.length; i++) {
+		//mouRecurs(i);
+	//}
 }	
+
+function getPosicions() {
+		alert("cridem getPosicions");
+		var url = "http://roger90.no-ip.org/HelloWorld/resources/emergps/posicions";
+		var req = createRequest(); // defined above
+		// Create the callback:
+		req.onreadystatechange = function() {
+		  if (req.readyState != 4) return; // Not there yet
+		  if (req.status != 200) {
+			// Handle request failure here...
+			alert(req.status);
+			return;
+		  }
+		  // Request successful, read the response
+		  var resp = req.responseText;	  
+		  resp = resp.split("&");
+		  resp.splice(0,1); //ara ja tenim a resp, cada posicio: id,lat,lon,id,lat,lon... etc
+		  alert(resp);
+		  
+		  for (var i = 0; i < resp.length; i+=3) {
+		  	for (var j = 0; j < recursos.length; j++) {
+		  		if (recursos[j].getTitle() == resp[i]) {
+		  			var pos = new google.maps.LatLng(resp[i+2],resp[i+1]);
+		  			recursos[j].setPosition(pos);
+		  		}
+		  	}
+		  }
+		  
+		}
+		req.open("GET", url, true);
+		req.send();
+}
 
 function mouRecurs(pos) {
 	
@@ -102,36 +139,6 @@ function maxDistancia() {
 	return index;
 }
 
-function threeMinDist() {
-	
-	var r1 = {
-		id: 1,
-		dist: 6
-	};
-	
-	var r2 = {
-		id: 2,
-		dist: 1
-	};
-	
-	var r3 = {
-		id: 3,
-		dist: 0
-	};
-	
-	var r4 = {
-		id: 4,
-		dist: 9
-	};
-	
-	distancies.push(r1,r2,r3,r4);
-	
-	var min1 = minDistancia();
-	var min2 = minDistancia();
-	var min3 = minDistancia();
-	document.getElementById("info").innerHTML = "les menors distancies son: "+ min1 + ", " + min2 + ", " + min3;
-}
-
 function distRecursos() {
 	var posIncidencia = new google.maps.LatLng(41.387917, 2.169919);
 	for (var i = 0; i < recursos.length; i++) calculateDistance(posIncidencia,recursos[i].getPosition());
@@ -139,13 +146,6 @@ function distRecursos() {
 
 function calculateDistance(location1, location2) {
 	directionsService = new google.maps.DirectionsService();
-	
-	
-	//var location1 = new google.maps.LatLng(39.99742423181819, 3.8307711482048035);  	
-	//var location2 = new google.maps.LatLng(39.99720642597629,  3.8302507996559143);  
-	
-	//var location1 = new google.maps.LatLng(41.387917, 2.169919);  	//barcelona
-	//var location2 = new google.maps.LatLng(40.416691, -3.700345);  //madrid
 	
 	var request = {
 	   origin:location1,
@@ -159,8 +159,9 @@ function calculateDistance(location1, location2) {
 	   	{   
 			var distance = response.routes[0].legs[0].distance;
 			var durada = response.routes[0].legs[0].duration;
+			resultat_distancies += "distancia= " + distance.value + ", ";
 			//alert ("la durada es " + durada.value);
-	      	var pos = afegeixDistancia(durada.value);
+	      	var pos = afegeixDistancia(distance.value);
 	      	if (pos != -1) {
 	      		directionsDisplay = new google.maps.DirectionsRenderer(
 				{
@@ -187,6 +188,7 @@ function calculateDistance(location1, location2) {
 
 function afegeixDistancia(distancia) {
 	if (distancies.length < 3) {
+		alert("encara no em picat el boto 3 cops");
 		distancies.push(distancia);
 		return -2;
 	}
@@ -205,19 +207,32 @@ function min3Dists(distancia) {
 
 function showRoute() {
 	for (var i = 0; i < rutes.length; i++) rutes[i].setMap(map);
+	document.getElementById("info").innerHTML = resultat_distancies;     
 }
 
 function placeRecurs(location) {
+	
   var image = 'cotxe_bombers.png';
-  var recurs = new google.maps.Marker({
+  
+  var marker = new google.maps.Marker({
       position: location, 
       map: map,
       icon: image,
       title: id_actual+""
   });
+  
+  var infowindow = new google.maps.InfoWindow({ 
+	content: marker.position+"",
+    size: new google.maps.Size(50,50)
+  });
+  
+  google.maps.event.addListener(marker, 'click', function() {
+    infowindow.open(map,marker);
+  });
+	  
   id_actual++;
   bounds.extend(location);
-  recursos.push(recurs);
+  recursos.push(marker);
 }
 
 function randomIncidencies() {
@@ -236,7 +251,7 @@ function randomIncidencies() {
 }
 
 function randomRecursos() {
-	for (var i = 0; i < 6; i++) {
+	for (var i = 0; i < 10; i++) {
 		var location = new google.maps.LatLng(41.387917+(i/32)+Math.random()/3, 1.5-(i/64)+Math.random()/3);
 		/*var recurs = {
 			pos: location,
@@ -372,55 +387,5 @@ function placeMarker(location) {
   markerG = marker;
 }
 
-function proves() {
-	$.create("div").jsonp("http://search.twitter.com/search.json?callback=?&from=:user", "results[0].text");
-	$.create("div").jsonp("http://roger90.no-ip.org/HelloWorld/resources/emergps/lectura/20001", "results[0].text");
-}
 
-function createRequest() {
-	  var result = null;
-	  if (window.XMLHttpRequest) {
-		// FireFox, Safari, etc.
-		result = new XMLHttpRequest();
-		if (typeof result.overrideMimeType != 'undefined') {
-		  result.overrideMimeType('text/xml'); // Or anything else
-		}
-	  }
-	  else if (window.ActiveXObject) {
-		// MSIE
-		result = new ActiveXObject("Microsoft.XMLHTTP");
-	  } 
-	  else {
-		// No known mechanism -- consider aborting the application
-	  }
-	  return result;
-}
-	
-function cridar() {
-	    var id = 10004;
-		alert(id);
-		var url = "http://roger90.no-ip.org/HelloWorld/resources/emergps/lectura/" + id;
-		var req = createRequest(); // defined above
-		// Create the callback:
-		req.onreadystatechange = function() {
-		  if (req.readyState != 4) return; // Not there yet
-		  if (req.status != 200) {
-			// Handle request failure here...
-			alert(req.status);
-			return;
-		  }
-		  // Request successful, read the response
-		  var resp = req.responseText;
-		  alert(resp);
-		  //var posx =  document.getElementById("posx");
-          //var posy =  document.getElementById("posy");
-		  
-		  //posx.value = resp;
-		  //posy.value = resp;
-		  // ... and use it as needed by your app.
-		}
-		req.open("GET", url, true);
-		req.send();
-	}
-	
 
