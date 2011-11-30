@@ -67,8 +67,9 @@
 						<input type="button" onclick="distRecursos()" id="min" style="width:150px" title="min" value="min" />												
 						<input type="button" onclick="mouRecursos()" id="pos" style="width:150px" title="pos" value="pos" />												
 						<input type="button" onclick="cridar()" id="cr" style="width:150px" title="cr" value="crida" />												
-						<input type="button" onclick="estat()" id="est" style="width:150px" title="est" value="estatt" />												
-						<input type="button" onclick="getPosicions()" id="pos" style="width:150px" title="pos" value="pos" />												
+						<input type="button" onclick="updateEstat()" id="est" style="width:150px" title="est" value="estatt" />												
+						<input type="button" onclick="updatePosicions()" id="pos" style="width:150px" title="pos" value="pos" />												
+						<input type="button" onclick="deleteIncidencia(0)" id="de" style="width:150px" title="de" value="delete" />												
 
 					</form>
 				</fieldset>
