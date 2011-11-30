@@ -33,6 +33,7 @@ function mouRecursos() {
 /* s'encarrega de les noves incidencies, el logins i logouts dels recursos */
 function updateEstat() {
 		alert("cridem updateStat");
+		
 		var url = "http://roger90.no-ip.org/HelloWorld/resources/emergps/estat";
 		var req = createRequest(); // defined above
 		// Create the callback:
@@ -45,17 +46,31 @@ function updateEstat() {
 		  }
 		  // Request successful, read the response
 		  var resp = req.responseText;	  
+		  
 		  resp = resp.split("#"); //separem en noves incidencies,les q hagin finalitzat, logins i logouts
+		  alert(resp);
 		  
 		  var inc_noves = resp[0].split("&");
 		  inc.splice(0,1); //tenim incidencies  
 		  alert("noves inc: " + inc);
 		  
+		  var inc_fin = resp[1].split("&");
+		  inc_fin.splice(0,1); //tenim incidencies finalitzades
+		  alert("incidencies finalitzades: "+ inc_fin);
+		  
+		  var login = resp[2].split("&");
+		  login.splice(0,1); //tenim logins
+		  alert("logins: "+ login);
+		  
+		  var logout = resp[3].split("&");
+		  login.splice(0,1); //tenim logouts
+		  alert("logins: "+ logout);
+		  
 		  /*ara cal fer 2 coses: 
 		   * 	1) crear la incidencia
 		   * 	2) assignar automaticament les unitats pertintents i notificar-ho al sv central
 		   */
-		  
+		  /*
 		  // format de la incidencia: id,lat,lon,descripcio
 		  for (var i = 0; i < inc_noves.length; i+=4) {
 		  	var pos = new google.maps.LatLng(inc_noves[i+2],inc_noves[i+1]);
@@ -63,24 +78,21 @@ function updateEstat() {
 		  	//falta assignar unitats a la incidencia (unitats que no estiguin ja assignades)
 		  }
 		  
-		  var inc_fin = resp[1].split("&");
-		  inc_fin.splice(0,1); //tenim incidencies finalitzades
-		  alert("incidencies finalitzades: "+ inc_fin);
+		  
 		  
 		  /*ara cal fer 3 coses:
 		   * 	1) borrar la incidencia en questio del mapa
 		   * 	2) desasignar les unitas que estaven assignades a la incidencia
 		   * 	3) notificar al sv central la baixa de la incidencia
 		   */
-		  
+		  /*
 		  //format incidencies finalitzades: id_inc
 		  for (var i = 0; i < inc_fin.length; i++) {
 		  	deleteIncidencia(inc_fin[i]); //eliminada i recursos alliberats
 		  	//falta avisar servidor central
-		  }
+		  }*/
 		  
-		  //var login = resp[2].split("&");
-		  //login.splice(0,1); //tenim logins
+		  
 		  
 		  /*ara cal fer 1 coses:
 		   * 	1) crear nous recursos al mapa 	
@@ -93,24 +105,18 @@ function updateEstat() {
 		  	logInRecurs(id,location)
 		  }*/
 		  		  
-		  //var logout = resp[3].split("&");
-		  //login.splice(0,1); //tenim logouts
 		  
 		  /*ara cal fer coses:
 		   * 	1) posar map:null al recurs
 		   * 	2) eliminar recurs del vector de recursos
 		   * 	3) enviar confirmacio al servidor central
 		   */
-		  
+		  /*
 		  //format logout: id_recurs
 		  for (var i = 0; i < logout.length; i++) {
 		  	logoutRecurs(logout[i]);
 		  	//falta enviar confirmacio cv central
-		  }
-		  		  
-		  alert("logins: " );
-		  alert("logouts: ");
-		  		  
+		  }*/		  		  
 		}
 		req.open("GET", url, true);
 		req.send();
