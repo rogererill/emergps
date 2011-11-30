@@ -4,8 +4,6 @@ var links = "";
 var index = 0;
 var bounds = new google.maps.LatLngBounds();
 var geocoder = new google.maps.Geocoder();
-var finestra;
-var markerG;
 var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
 var recursos = new Array();
@@ -62,7 +60,7 @@ function updateEstat() {
 		  for (var i = 0; i < inc_noves.length; i+=4) {
 		  	var pos = new google.maps.LatLng(inc_noves[i+2],inc_noves[i+1]);
 		  	placeRandomMarker(pos,inc_noves[i],inc_noves[i+3]);
-		  	//assignar unitats a la incidencia (unitats que no estiguin ja assignades)
+		  	//falta assignar unitats a la incidencia (unitats que no estiguin ja assignades)
 		  }
 		  
 		  var inc_fin = resp[1].split("&");
@@ -87,15 +85,28 @@ function updateEstat() {
 		  /*ara cal fer 1 coses:
 		   * 	1) crear nous recursos al mapa 	
 		   */
-		  
+		  /*
 		  //format login: id,lat,lon
+		 
 		  for (var i = 0; i < login.length; i+=3) {
-		  	
-		  }
-		  
-		  
+		  	var pos_rec = new google.maps.LatLng(login[i+2],login[i+1]);
+		  	logInRecurs(id,location)
+		  }*/
+		  		  
 		  //var logout = resp[3].split("&");
 		  //login.splice(0,1); //tenim logouts
+		  
+		  /*ara cal fer coses:
+		   * 	1) posar map:null al recurs
+		   * 	2) eliminar recurs del vector de recursos
+		   * 	3) enviar confirmacio al servidor central
+		   */
+		  
+		  //format logout: id_recurs
+		  for (var i = 0; i < logout.length; i++) {
+		  	logoutRecurs(logout[i]);
+		  	//falta enviar confirmacio cv central
+		  }
 		  		  
 		  alert("logins: " );
 		  alert("logouts: ");
@@ -125,7 +136,7 @@ function updatePosicions() {
 		  
 		  for (var i = 0; i < resp.length; i+=3) {
 		  	for (var j = 0; j < recursos.length; j++) {
-		  		id_rec = recursos[j].obteId();
+		  		id_rec = obteId(recursos[j].getTitle());
 		  		if (id_rec == resp[i]) {
 		  			var pos = new google.maps.LatLng(resp[i+2],resp[i+1]);
 		  			recursos[j].setPosition(pos);
@@ -138,11 +149,13 @@ function updatePosicions() {
 		req.send();
 }
 
+/*donat el titol d'un RECURS, retorna l'id del recurs*/
 function obteId(title) {
 	title = title.split("#");
 	return title[0];
 }
 
+/*donat el titol d'un RECURS, retorna l'id de l'incidencia la qual esta assignat*/
 function obteIdInc(title) {
 	title = title.split("#");
 	return title[1];
@@ -226,7 +239,7 @@ function maxDistancia() {
 function distRecursos() {
 	var posIncidencia = new google.maps.LatLng(41.387917, 2.169919);
 	for (var i = 0; i < recursos.length; i++) {
-		calculateDistance(posIncidencia,recursos[i].getPosition());
+		calculateDistance(recursos[i].getPosition(),posIncidencia);
 	}
 }
 
@@ -318,6 +331,28 @@ function placeRecurs(location) {
   recursos.push(marker);
 }
 
+function logInRecurs(id,location) {	
+	var image = 'cotxe_bombers.png';
+  
+	var marker = new google.maps.Marker({
+		position: location, 
+	    map: map,
+	    icon: image,
+	    title: id+"#-1"
+	});
+	  
+	var infowindow = new google.maps.InfoWindow({ 
+	    size: new google.maps.Size(50,50)
+	});
+	  
+	google.maps.event.addListener(marker, 'click', function() {
+		infowindow.open(map,marker);
+	});
+		  
+	bounds.extend(location);
+	recursos.push(marker);
+}
+
 function randomIncidencies() {
 	for (var i = 0; i < 5; i++) {
 	    var location = new google.maps.LatLng(41.387917+(i/10), 2.169919-(i/10));  	
@@ -370,8 +405,7 @@ function horaActual() {
 	return hora + ":" + minuto;
 }
 
-function crearIncidencia() {
-	
+function crearIncidencia() {	
 	var title = document.formCrearInc.titol.value;
 	var lat = document.formCrearInc.lat.value;
 	var lng = document.formCrearInc.lng.value;
@@ -455,7 +489,7 @@ function placeMarker(location) {
       icon: image
   });
     
-  finestra = new google.maps.InfoWindow({ 
+  var finestra = new google.maps.InfoWindow({ 
   	content: "<form name='formCrearInc'><input type='text' name='titol'><input type='hidden' name='lat' value="+location.lat()+"><input type='hidden' name='lng' value="+location.lng()+"><input type='button' value='crear' name='crear' onclick='crearIncidencia()'></form>",			
     size: new google.maps.Size(50,50)
   });
@@ -467,7 +501,6 @@ function placeMarker(location) {
 
   map.setCenter(location);
   finestra.open(map,marker);
-  markerG = marker;
 }
 
 //assignar una incidencia a un recurs 
@@ -495,10 +528,21 @@ function deleteIncidencia(id_inc) {
 			alert("hem eliminat incidencia correctament");
 		}
 	}
-	
 	for (var j = 0; j < recursos.length; j++) {
 		if (obteIdInc(recursos[j].getTitle()) == id_inc) {
 			alliberarRecurs(j);
 		}
 	}
+}
+
+function logoutRecurs(recurs) {
+	for (var i = 0; i < recursos.length; i++) {
+		var id = obteId(markers[i].getTitle());
+		if (id == recurs) {
+			recursos[i].setMap(null);
+			recursos.splice(i,1);
+			alert("hem eliminat incidencia recurs correctament");
+		}
+	}
+	alert("error: no s'ha pogut logout algun recurs");
 }
