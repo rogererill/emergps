@@ -14,8 +14,12 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -28,13 +32,15 @@ public class ComService extends Service implements Runnable{
 	String URL = "http://roger90.no-ip.org/HelloWorld/resources/emergps";  
 		final String TAG = "ComService";
 		private int id = -1;
-		private boolean incid = false;
+		private int nIncid = -1;
+		private boolean incid = false;		
 		 private final IBinder mBinder = new LocalBinder();
 		 private Handler handler = new Handler();
 		 public static final String COUNTERKEY = "countervalue";
 		 public static final String POS_FILTER = "upc.pxc.emergps.filter.pos";
 		 public static final String DADES_FILTER = "upc.pxc.emergps.filter.dades";
 		 public static final String DADES_EXTRA = "dades"; 
+		 private static final String ACK = "ack";
 		 private static final int TIME_ENV_POS = 5000;
 		 private static final int TIME_DADES_INC = 10000;
 		 private String dades = "";
@@ -55,16 +61,19 @@ public class ComService extends Service implements Runnable{
 	      @Override
 	      public void onCreate() {
 	            super.onCreate();
-	            final Runnable r = this;
+	            //final Runnable r = this;
+	            startLocalizacion();
 	            
 	            Thread env_pos = new Thread() {		// THREAD ENV POS
 	            	public void run(){
 	            		while(true){
-	            			/*
-		            		if(enviaPos()){
-	            				handler.post(r);
-	            				incid = true;
-	            			}*/
+	            			if(id != -1){
+			            		if(enviaPos()){
+		            				//handler.post(r);
+		            				broadCastPos();
+		            				incid = true;
+		            			}
+	            			}
 		            		try {
 								Thread.sleep(TIME_ENV_POS);
 							} catch (InterruptedException e) {
@@ -80,7 +89,8 @@ public class ComService extends Service implements Runnable{
 	            		while(true){
 	            			if(incid){
 	            				dades = actIncid();
-	            				handler.post(r);
+	            				//handler.post(r);
+	            				broadCastDades();
 	            			}
 		            		try {
 								Thread.sleep(TIME_DADES_INC);
@@ -110,10 +120,12 @@ public class ComService extends Service implements Runnable{
 	          }
 	      }
 	      
+	      public Location getLoc(){
+	    	  return loc;
+	      }
 
 	      
 	      public int getId(){
-	    	  handler.post(this);
 	    	  return id;
 	      }
 	      public void setId(int n){
@@ -142,7 +154,7 @@ public class ComService extends Service implements Runnable{
 	    		            e.printStackTrace();  
 	    		        }  
 	    		        httpclient.getConnectionManager().shutdown();  
-	    		        Log.i(TAG, result);  
+	    		        Log.i("autent", result);  
 	    		
 	    		        
 	    		  
@@ -151,20 +163,77 @@ public class ComService extends Service implements Runnable{
 				e.printStackTrace();
 			}
 	    	  id = Integer.parseInt(result);
+	    	  
+	    	  if(id < 10000 || id >= 40000)	return false;
+	    	  // TODO Si ID no correcte, retornar false
 	    	  return true;
+	      }
+	      
+	      
+	      LocationManager locManager;
+	      LocationListener locListener;
+	      Location loc;
+	      private void startLocalizacion()
+	      {
+	          //Obtenemos una referencia al LocationManager
+	          locManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+	       
+	          //Obtenemos la última posición conocida
+	          loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+	       
+	          //Nos registramos para recibir actualizaciones de la posición
+	          locListener = new LocationListener() {
+	        	  @Override
+	              public void onLocationChanged(Location location) {
+	                  loc = location;
+	              }
+
+				@Override
+				public void onProviderDisabled(String provider) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void onProviderEnabled(String provider) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void onStatusChanged(String provider, int status,
+						Bundle extras) {
+					// TODO Auto-generated method stub
+					
+				}
+	       
+	              //Resto de métodos del listener
+	              //...
+	          };
+	       
+	          locManager.requestLocationUpdates(
+	              LocationManager.GPS_PROVIDER, 30000, 5000, locListener);
 	      }
 	      
 	      public boolean enviaPos(){
 		  		String result = "0";
 		    	  try {
-		    		  		Float posX = 0.0f, posY = 0.0f;
-		    		  
+		    		  Double posX, posY;
+		    		  if(loc != null){
+		    		  		posX = loc.getLongitude();
+		    		  		posY = loc.getLatitude();
+		    		  }else {
+		    			  posX = 0d;
+		    			  posY = 0d;
+		    		  }
 		    		        HttpClient httpclient = new DefaultHttpClient();  
 		    		       
+		    		        Log.d(TAG, "long: "+posX+" - lat: "+posY);
+		    		        
 		    		        HttpGet request = new HttpGet(URL+"/env_pos");
 		    		        request.addHeader("id", Integer.toString(id));
-		    		        request.addHeader("posx", Float.toString(posX));
-		    				request.addHeader("posy", Float.toString(posY));
+		    		        request.addHeader("posx", Double.toString(posX));
+		    				request.addHeader("posy", Double.toString(posY));
 		    				
 		    		        ResponseHandler<String> handler = new BasicResponseHandler();  
 		    		        try {  
@@ -176,13 +245,13 @@ public class ComService extends Service implements Runnable{
 		    		            e.printStackTrace();  
 		    		        }  
 		    		        httpclient.getConnectionManager().shutdown();  
-		    		        Log.i(TAG, result);  
+		    		        Log.i("enviaPos", result);  
 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 		    	 boolean ret = false;
-		    	 //ret = result.equals("1");
+		    	 ret = result.equals("1");
 		    	 // TODO Retornar true si hi ha una nova incidència
 	    	  return ret;
 	      }
@@ -194,7 +263,9 @@ public class ComService extends Service implements Runnable{
 		    		        HttpClient httpclient = new DefaultHttpClient();  
 		    		       
 		    		        HttpGet request = new HttpGet(URL+"/inc_act");
-		    		        request.addHeader("id", Integer.toString(id));
+		    		        
+		    		        // TODO CAMBIAR 0 per ID
+		    		        request.addHeader("id", /*Integer.toString(id)*/"0");
 		    				
 		    		        ResponseHandler<String> handler = new BasicResponseHandler();  
 		    		        try {  
@@ -206,7 +277,7 @@ public class ComService extends Service implements Runnable{
 		    		            e.printStackTrace();  
 		    		        }  
 		    		        httpclient.getConnectionManager().shutdown();  
-		    		        Log.i(TAG, result);  
+		    		        Log.i("actIncid", result);  
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -214,6 +285,103 @@ public class ComService extends Service implements Runnable{
 	    	  return result;
 	      }
 	      
+	      public boolean novaIncid(float posX, float posY, String desc){
+	    	  boolean res = false;
+	    	  String result = "";
+	    	  try {
+	    		  
+  		        HttpClient httpclient = new DefaultHttpClient();  
+  		       
+  		        HttpGet request = new HttpGet(URL+"/new_inc");
+  		        //request.addHeader("id", Integer.toString(id));
+  		        request.addHeader("posx", Float.toString(posX));
+  		        request.addHeader("posy", Float.toString(posY));
+  		        request.addHeader("comentari", desc);
+  		        ResponseHandler<String> handler = new BasicResponseHandler();  
+  		        try {  
+  		        	
+  		            result = httpclient.execute(request, handler);  
+  		        } catch (ClientProtocolException e) {  
+  		            e.printStackTrace();  
+  		        } catch (IOException e) {  
+  		            e.printStackTrace();  
+  		        }  
+  		        httpclient.getConnectionManager().shutdown();  
+  		        Log.i("novaIncid", result);  
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+	    	  res = result.equals(ACK);
+	    	  return res;
+	      }
+	      
+	      public boolean fiIncid(){
+	    	  boolean res = false;
+	    	  String result = "";
+	    	  try {
+	    		  
+  		        HttpClient httpclient = new DefaultHttpClient();  
+  		       
+  		        HttpGet request = new HttpGet(URL+"/fi_inc");
+  		        request.addHeader("id", Integer.toString(id));
+  		        ResponseHandler<String> handler = new BasicResponseHandler();  
+  		        try {  
+  		        	
+  		            result = httpclient.execute(request, handler);  
+  		        } catch (ClientProtocolException e) {  
+  		            e.printStackTrace();  
+  		        } catch (IOException e) {  
+  		            e.printStackTrace();  
+  		        }  
+  		        httpclient.getConnectionManager().shutdown();  
+  		        Log.i("fiIncid", result);  
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+	    	  res = result.equals(ACK);
+	    	  if(res){
+	    		  incid = false;
+	    		  nIncid = -1;
+	    	  }
+	    	  return res;
+	      }
+	      
+	      public boolean logout(){
+	    	  boolean res = false;
+	    	  String result = "";
+	    	  try {
+	    		  
+  		        HttpClient httpclient = new DefaultHttpClient();  
+  		       
+  		        HttpGet request = new HttpGet(URL+"/logout");
+  		        request.addHeader("id", Integer.toString(id));
+  		        ResponseHandler<String> handler = new BasicResponseHandler();  
+  		        try {  
+  		        	
+  		            result = httpclient.execute(request, handler);  
+  		        } catch (ClientProtocolException e) {  
+  		            e.printStackTrace();  
+  		        } catch (IOException e) {  
+  		            e.printStackTrace();  
+  		        }  
+  		        httpclient.getConnectionManager().shutdown();  
+  		        Log.i("Logout", result);  
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+	    	  res = result.equals(id);
+	    	  if(res){
+	    		  incid = false;
+	    		  id = -1;
+	    		  nIncid = -1;
+	    	  }
+	    	  return res;
+	      }
+	      
+	      //TODO eliminar run() i implements runnable
 		@Override
 		public void run() {
 			broadCastPos();
@@ -223,16 +391,18 @@ public class ComService extends Service implements Runnable{
 		private void broadCastPos(){
 			Intent intent = new Intent();
 			intent.setAction(POS_FILTER); //Define intent-filter
-			intent.putExtra("SERVICE", "PROVA");
 			sendBroadcast(intent);
 			
 		}
 		
 		private void broadCastDades(){
+			if(dades.equals("-1")){
+				incid = false;
+				nIncid = -1;
+			}
 			Intent intent = new Intent();
 			intent.putExtra(DADES_EXTRA, dades);
 			intent.setAction(DADES_FILTER); //Define intent-filter
-			intent.putExtra("SERVICE", "PROVA");
 			sendBroadcast(intent);
 			
 		}

@@ -19,7 +19,7 @@
 		android:id="@+id/transparent_panel"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
+		android:layout_alignParentBottom="false"
 		android:paddingLeft="5px"
 		android:paddingTop="5px"
 		android:paddingRight="5px"
