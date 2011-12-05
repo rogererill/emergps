@@ -75,8 +75,8 @@ public class Autent extends Activity implements OnClickListener{
     				startActivity(i);
     				finish();
     			} else {
-    				tu.setText("");
-    				tp.setText("");
+    				//tu.setText("");
+    				//tp.setText("");
     				Log.d("onClick", "User o Pass incorrectes");
     			}
 
