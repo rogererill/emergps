@@ -102,7 +102,7 @@ public class ComService extends Service implements Runnable{
 	            	}
 	            };
 	            dades_inc.start();
-	      }
+	      }	      
 	      
 	      @Override
 	      public void onDestroy() {
@@ -156,16 +156,18 @@ public class ComService extends Service implements Runnable{
 	    		        httpclient.getConnectionManager().shutdown();  
 	    		        Log.i("autent", result);  
 	    		
-	    		        
+	    		       
 	    		  
 	    		  
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-	    	  id = Integer.parseInt(result);
 	    	  
-	    	  if(id < 10000 || id >= 40000)	return false;
+
+	    	  int aux = Integer.parseInt(result);
+	    	  if(aux < 10000 || aux >= 40000)	return false;
 	    	  // TODO Si ID no correcte, retornar false
+	    	  id = Integer.parseInt(result);
 	    	  return true;
 	      }
 	      
@@ -180,7 +182,11 @@ public class ComService extends Service implements Runnable{
 	       
 	          //Obtenemos la última posición conocida
 	          loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-	       
+	          // TODO
+	          
+	          loc.setLatitude(41.4164d);	// POSICIO DE LES COTXERES
+	          loc.setLongitude(2.1345d);
+	          
 	          //Nos registramos para recibir actualizaciones de la posición
 	          locListener = new LocationListener() {
 	        	  @Override
@@ -200,6 +206,7 @@ public class ComService extends Service implements Runnable{
 					
 				}
 
+				
 				@Override
 				public void onStatusChanged(String provider, int status,
 						Bundle extras) {
@@ -219,16 +226,17 @@ public class ComService extends Service implements Runnable{
 		  		String result = "0";
 		    	  try {
 		    		  Double posX, posY;
-		    		  if(loc != null){
+		    		  if(loc == null || loc.getLongitude() < 2d || loc.getLongitude() > 2.3d || loc.getLatitude() < 40.8d || loc.getLatitude() > 42.7d ){
+		    			  posX = 2.1345d;		// Posició Cotxeres
+		    			  posY = 41.4164d;
+		    		  } else {
 		    		  		posX = loc.getLongitude();
-		    		  		posY = loc.getLatitude();
-		    		  }else {
-		    			  posX = 0d;
-		    			  posY = 0d;
+		    		  		posY = loc.getLatitude(); 
 		    		  }
+		    		 
 		    		        HttpClient httpclient = new DefaultHttpClient();  
 		    		       
-		    		        Log.d(TAG, "long: "+posX+" - lat: "+posY);
+		    		        //Log.d(TAG, "long: "+posX+" - lat: "+posY);
 		    		        
 		    		        HttpGet request = new HttpGet(URL+"/env_pos");
 		    		        request.addHeader("id", Integer.toString(id));
@@ -237,7 +245,7 @@ public class ComService extends Service implements Runnable{
 		    				
 		    		        ResponseHandler<String> handler = new BasicResponseHandler();  
 		    		        try {  
-		    		        	
+		    		        
 		    		            result = httpclient.execute(request, handler);  
 		    		        } catch (ClientProtocolException e) {  
 		    		            e.printStackTrace();  
@@ -245,7 +253,7 @@ public class ComService extends Service implements Runnable{
 		    		            e.printStackTrace();  
 		    		        }  
 		    		        httpclient.getConnectionManager().shutdown();  
-		    		        Log.i("enviaPos", result);  
+		    		        //Log.i("enviaPos", result);  
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -265,7 +273,7 @@ public class ComService extends Service implements Runnable{
 		    		        HttpGet request = new HttpGet(URL+"/inc_act");
 		    		        
 		    		        // TODO CAMBIAR 0 per ID
-		    		        request.addHeader("id", /*Integer.toString(id)*/"0");
+		    		        request.addHeader("id", Integer.toString(id));
 		    				
 		    		        ResponseHandler<String> handler = new BasicResponseHandler();  
 		    		        try {  
@@ -285,7 +293,7 @@ public class ComService extends Service implements Runnable{
 	    	  return result;
 	      }
 	      
-	      public boolean novaIncid(float posX, float posY, String desc){
+	      public boolean novaIncid(double posX, double posY, String desc){
 	    	  boolean res = false;
 	    	  String result = "";
 	    	  try {
@@ -294,8 +302,8 @@ public class ComService extends Service implements Runnable{
   		       
   		        HttpGet request = new HttpGet(URL+"/new_inc");
   		        //request.addHeader("id", Integer.toString(id));
-  		        request.addHeader("posx", Float.toString(posX));
-  		        request.addHeader("posy", Float.toString(posY));
+  		        request.addHeader("posx", Double.toString(posX));
+  		        request.addHeader("posy", Double.toString(posY));
   		        request.addHeader("comentari", desc);
   		        ResponseHandler<String> handler = new BasicResponseHandler();  
   		        try {  
@@ -380,6 +388,8 @@ public class ComService extends Service implements Runnable{
 	    	  }
 	    	  return res;
 	      }
+	      
+	      
 	      
 	      //TODO eliminar run() i implements runnable
 		@Override
