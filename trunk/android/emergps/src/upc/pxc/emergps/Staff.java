@@ -2,7 +2,7 @@ package upc.pxc.emergps;
 
 public class Staff {
 	String id;
-	Float posx, posy;
+	Double posx, posy;
 	
 	public String getId() {
 		return id;
@@ -10,16 +10,16 @@ public class Staff {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public Float getPosx() {
+	public Double getPosx() {
 		return posx;
 	}
-	public void setPosx(Float posx) {
+	public void setPosx(Double posx) {
 		this.posx = posx;
 	}
-	public Float getPosy() {
+	public Double getPosy() {
 		return posy;
 	}
-	public void setPosy(Float posy) {
+	public void setPosy(Double posy) {
 		this.posy = posy;
 	}
 

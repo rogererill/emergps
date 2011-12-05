@@ -1,7 +1,24 @@
 
 package upc.pxc.emergps;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 
 import android.app.Activity;
@@ -16,6 +33,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.util.Log;
 
 import com.google.android.maps.GeoPoint;
@@ -27,10 +45,11 @@ import com.google.android.maps.Overlay;
 
 public class Incidence extends MapActivity {
 	
-	static final int VAL_INCID = 0;
-	static final int VAL_POL = 1;
-	static final int VAL_BOMB = 2;
-	static final int VAL_AMB = 3;
+	static final int VAL_POS = 0;
+	static final int VAL_INCID = 1;
+	static final int VAL_POL = 2;
+	static final int VAL_BOMB = 3;
+	static final int VAL_AMB = 4;
 	
    private MapView map;
    private MapController controller;
@@ -73,12 +92,12 @@ public class Incidence extends MapActivity {
 
    }
 
-
    private void initMapView() {
       map = (MapView) findViewById(R.id.map);
       controller = map.getController();
       map.setSatellite(true);
       map.setBuiltInZoomControls(true);
+      controller.setZoom(12);
    }
 
    private void initMyLocation() {
@@ -97,51 +116,59 @@ public class Incidence extends MapActivity {
    
    private void updateIncidence(){
 		List<Overlay> capas = map.getOverlays();
+		capas.clear();
+		
+		
 
-		// PINTEM INCID
-		OverlayMapa incid = new OverlayMapa(VAL_INCID, dat.getPosx(), dat.getPosy());
-		capas.add(incid);
 		
 		// PINTEM POLICIA
 		for(int i = 0; i < dat.getPolicia().size(); i++){
 			OverlayMapa pol = new OverlayMapa(VAL_POL, dat.getPolicia().get(i).getPosx(), dat.getPolicia().get(i).getPosy());
 			capas.add(pol);
-			Log.d("POLICIA", "Afegir");
+			//Log.d("POLICIA", Double.toString(dat.getPolicia().get(i).getPosx()) + " - " + Double.toString(dat.getPolicia().get(i).getPosy()));
 		}
 		
 		// PINTEM BOMB
 		for(int i = 0; i < dat.getBomber().size(); i++){
 			OverlayMapa bomb = new OverlayMapa(VAL_BOMB, dat.getBomber().get(i).getPosx(), dat.getBomber().get(i).getPosy());
 			capas.add(bomb);
-			Log.d("BOMBER", "Afegir");
+			//Log.d("BOMBER", "Afegir");
 		}
 		
 		// PINTEM AMB
 		for(int i = 0; i < dat.getAmbulancia().size(); i++){
 			OverlayMapa amb = new OverlayMapa(VAL_AMB, dat.getAmbulancia().get(i).getPosx(), dat.getAmbulancia().get(i).getPosy());
 			capas.add(amb);
-			Log.d("AMBULANCIA", "Afegir");
+			//Log.d("AMBULANCIA", "Afegir");
 		}
 		
-		map.postInvalidate();
-	   
+		// PINTEM INCID
+		OverlayMapa incid = new OverlayMapa(VAL_INCID, dat.getPosx(), dat.getPosy());
+		capas.add(incid);
 		
+		// PINTEM POS
+		OverlayMapa pos = new OverlayMapa(VAL_POS, mBoundService.getLoc().getLongitude(), mBoundService.getLoc().getLatitude());
+		capas.add(pos);
+	
 		// DIBUIXAR RUTA!
-		
-		
-
+		try{
+			GeoPoint gp = new GeoPoint((int)(dat.getPosy()*1000000),(int)Math.round(dat.getPosx()*1000000));
+			DrawPath(LocToGeopoint(mBoundService.getLoc()),gp, Color.GREEN, map);
+		} catch (Exception e){
+			Log.d("DRAW ROUTE", "ERROR!");
+		}
 		
 		
 		// TODO TEMPROAL!
 	      GeoPoint p = LocToGeopoint(mBoundService.getLoc());
 	      controller.setCenter(p);
-		
+	      map.postInvalidate();
    }
 
    
    // TODO SEGURAMENT NO FUNCIONA BÉ!!
    private GeoPoint LocToGeopoint(Location l){
-	      GeoPoint p = new GeoPoint((int)Math.round(l.getLongitude()*1000000), (int)Math.round(l.getLatitude()*1000000));
+	      GeoPoint p = new GeoPoint((int)Math.round(l.getLatitude()*1000000), (int)Math.round(l.getLongitude()*1000000));
 	      return p;
    }
    
@@ -167,12 +194,16 @@ public class Incidence extends MapActivity {
 			// TODO
 			String dadesStr = extras.getString(mBoundService.DADES_EXTRA);
 			//String dadesStr = "0&2.12354&41.42164&Atracament amb pistoles&12345&2.164607&41.424789&10045&0.0&0.0&10090&-122.084095&37.422005";
+			//Log.d("INCID", dadesStr);
+			dat = new Dades();
 			dat.setDades(dadesStr);
 			
 			updateIncidence();
-			
+		
 		}
 	};
+
+
 	
     @Override
     public void onPause(){
@@ -219,7 +250,87 @@ public class Incidence extends MapActivity {
     	}
     	bind = false;
     }
+    
+    
+    
+    
+    private void DrawPath(GeoPoint src,GeoPoint dest, int color, MapView mMapView01) 
+    { 
+    // connect to map web service 
+    StringBuilder urlString = new StringBuilder(); 
+    urlString.append("http://maps.google.com/maps?f=d&hl=en"); 
+    urlString.append("&saddr=");//from 
+    urlString.append( Double.toString((double)src.getLatitudeE6()/1.0E6 )); 
+    urlString.append(","); 
+    urlString.append( Double.toString((double)src.getLongitudeE6()/1.0E6 )); 
+    urlString.append("&daddr=");//to 
+    urlString.append( Double.toString((double)dest.getLatitudeE6()/1.0E6 )); 
+    urlString.append(","); 
+    urlString.append( Double.toString((double)dest.getLongitudeE6()/1.0E6 )); 
+    urlString.append("&ie=UTF8&0&om=0&output=kml"); 
+    //Log.d("xxx","URL="+urlString.toString()); 
+    // get the kml (XML) doc. And parse it to get the coordinates(direction route). 
+    Document doc = null; 
+    HttpURLConnection urlConnection= null; 
+    URL url = null; 
+    try 
+    { 
+    url = new URL(urlString.toString()); 
+    urlConnection=(HttpURLConnection)url.openConnection(); 
+    urlConnection.setRequestMethod("GET"); 
+    urlConnection.setDoOutput(true); 
+    urlConnection.setDoInput(true); 
+    urlConnection.connect(); 
+
+    
+    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance(); 
+    DocumentBuilder db = dbf.newDocumentBuilder(); 
+    doc = db.parse(urlConnection.getInputStream()); 
+
+    if(doc.getElementsByTagName("GeometryCollection").getLength()>0) 
+    { 
+    //String path = doc.getElementsByTagName("GeometryCollection").item(0).getFirstChild().getFirstChild().getNodeName(); 
+    String path = doc.getElementsByTagName("GeometryCollection").item(0).getFirstChild().getFirstChild().getFirstChild().getNodeValue() ; 
+    //Log.d("xxx","path="+ path); 
+    String [] pairs = path.split(" "); 
+    String[] lngLat = pairs[0].split(","); // lngLat[0]=longitude lngLat[1]=latitude lngLat[2]=height 
+    // src 
+    GeoPoint startGP = new GeoPoint((int)(Double.parseDouble(lngLat[1])*1E6),(int)(Double.parseDouble(lngLat[0])*1E6)); 
+    mMapView01.getOverlays().add(new CamiOverlay(startGP,startGP,1)); 
+    GeoPoint gp1; 
+    GeoPoint gp2 = startGP; 
+    for(int i=1;i<pairs.length;i++) // the last one would be crash 
+    { 
+    lngLat = pairs[i].split(","); 
+    gp1 = gp2; 
+    // watch out! For GeoPoint, first:latitude, second:longitude 
+    gp2 = new GeoPoint((int)(Double.parseDouble(lngLat[1])*1E6),(int)(Double.parseDouble(lngLat[0])*1E6)); 
+    mMapView01.getOverlays().add(new CamiOverlay(gp1,gp2,2,color)); 
+    //Log.d("xxx","pair:" + pairs[i]); 
+    } 
+    mMapView01.getOverlays().add(new CamiOverlay(dest,dest, 3)); // use the default color 
+    } 
+    } 
+    catch (MalformedURLException e) 
+    { 
+    e.printStackTrace(); 
+    } 
+    catch (IOException e) 
+    { 
+    e.printStackTrace(); 
+    } 
+    catch (ParserConfigurationException e) 
+    { 
+    e.printStackTrace(); 
+    } 
+    catch (SAXException e) 
+    { 
+    e.printStackTrace(); 
+    } 
+    }
+    
 }
+
 
 
 
