@@ -10,6 +10,9 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -40,9 +43,10 @@ public class ComService extends Service implements Runnable{
 		 public static final String POS_FILTER = "upc.pxc.emergps.filter.pos";
 		 public static final String DADES_FILTER = "upc.pxc.emergps.filter.dades";
 		 public static final String DADES_EXTRA = "dades"; 
-		 private static final String ACK = "ack";
+		 private static final String ACK = "true";
 		 private static final int TIME_ENV_POS = 5000;
 		 private static final int TIME_DADES_INC = 10000;
+		private static final int NOTIF_ALERTA_ID = 0;
 		 private String dades = "";
 		 
 		@Override
@@ -69,9 +73,13 @@ public class ComService extends Service implements Runnable{
 	            		while(true){
 	            			if(id != -1){
 			            		if(enviaPos()){
-		            				//handler.post(r);
+			            			if(!incid)	notificar();
+			            				
+			            				
 		            				broadCastPos();
 		            				incid = true;
+		            				
+		            				
 		            			}
 	            			}
 		            		try {
@@ -103,6 +111,43 @@ public class ComService extends Service implements Runnable{
 	            };
 	            dades_inc.start();
 	      }	      
+	      
+	      private void notificar(){
+	    	  
+	    	//Obtenemos una referencia al servicio de notificaciones
+	    	  String ns = Context.NOTIFICATION_SERVICE;
+	    	  NotificationManager notManager =
+	    	      (NotificationManager) getSystemService(ns);
+	    	  
+	    	//Configuramos la notificación
+	    	  int icono = android.R.drawable.stat_sys_warning;
+	    	  CharSequence textoEstado = "Incidència!";
+	    	  long hora = System.currentTimeMillis();
+	    	   
+	    	  Notification notif = new Notification(icono, textoEstado, hora);
+	    	  
+	    	//Configuramos el Intent
+	    	  Context contexto = getApplicationContext();
+	    	  CharSequence titulo = "Nova incidència";
+	    	  CharSequence descripcion = "Nova incidència";
+	    	   
+	    	  Intent notIntent = new Intent(contexto,Incidence.class);
+	    	   
+	    	  PendingIntent contIntent = PendingIntent.getActivity(contexto, 0, notIntent, 0);
+	    	   
+	    	  notif.setLatestEventInfo(contexto, titulo, descripcion, contIntent);
+	    	  
+	    	//AutoCancel: cuando se pulsa la notificaión ésta desaparece
+	    	  notif.flags |= Notification.FLAG_AUTO_CANCEL;
+	    	   
+	    	  //Añadir sonido, vibración y luces
+	    	  //notif.defaults |= Notification.DEFAULT_SOUND;
+	    	  notif.defaults |= Notification.DEFAULT_VIBRATE;
+	    	  //notif.defaults |= Notification.DEFAULT_LIGHTS;
+	    	  
+	    	//Enviar notificación
+	    	  notManager.notify(NOTIF_ALERTA_ID, notif);
+	      }
 	      
 	      @Override
 	      public void onDestroy() {
@@ -183,9 +228,11 @@ public class ComService extends Service implements Runnable{
 	          //Obtenemos la última posición conocida
 	          loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 	          // TODO
-	          
-	          loc.setLatitude(41.4164d);	// POSICIO DE LES COTXERES
-	          loc.setLongitude(2.1345d);
+	          if(loc == null){
+	        	  loc = new Location("AUX_PROVIDER");
+    	          loc.setLatitude(41.4164d);	// POSICIO DE LES COTXERES
+    	          loc.setLongitude(2.1345d);
+	          }
 	          
 	          //Nos registramos para recibir actualizaciones de la posición
 	          locListener = new LocationListener() {
@@ -227,12 +274,13 @@ public class ComService extends Service implements Runnable{
 		    	  try {
 		    		  Double posX, posY;
 		    		  if(loc == null || loc.getLongitude() < 2d || loc.getLongitude() > 2.3d || loc.getLatitude() < 40.8d || loc.getLatitude() > 42.7d ){
-		    			  posX = 2.1345d;		// Posició Cotxeres
-		    			  posY = 41.4164d;
-		    		  } else {
+		    	          loc.setLatitude(41.4164d);	// POSICIO DE LES COTXERES
+		    	          loc.setLongitude(2.1345d);
+		    		  }
+		    		  
 		    		  		posX = loc.getLongitude();
 		    		  		posY = loc.getLatitude(); 
-		    		  }
+		    		  
 		    		 
 		    		        HttpClient httpclient = new DefaultHttpClient();  
 		    		       
@@ -359,6 +407,7 @@ public class ComService extends Service implements Runnable{
 	      public boolean logout(){
 	    	  boolean res = false;
 	    	  String result = "";
+	    	  Log.i("Logout", "INICI");  
 	    	  try {
 	    		  
   		        HttpClient httpclient = new DefaultHttpClient();  
@@ -366,21 +415,20 @@ public class ComService extends Service implements Runnable{
   		        HttpGet request = new HttpGet(URL+"/logout");
   		        request.addHeader("id", Integer.toString(id));
   		        ResponseHandler<String> handler = new BasicResponseHandler();  
-  		        try {  
-  		        	
-  		            result = httpclient.execute(request, handler);  
-  		        } catch (ClientProtocolException e) {  
-  		            e.printStackTrace();  
-  		        } catch (IOException e) {  
-  		            e.printStackTrace();  
-  		        }  
+
+  		        
+  		        
+  		        result = httpclient.execute(request, handler);  
+
   		        httpclient.getConnectionManager().shutdown();  
   		        Log.i("Logout", result);  
-
+  		      Log.i("Logout", "TRY");  
 				} catch (Exception e) {
 					e.printStackTrace();
+					Log.i("Logout", "CATCH");  
 				}
-	    	  res = result.equals(id);
+	    	  Log.d("LOGOUT", result);
+	    	  res = result.equals(ACK);
 	    	  if(res){
 	    		  incid = false;
 	    		  id = -1;
@@ -388,6 +436,7 @@ public class ComService extends Service implements Runnable{
 	    	  }
 	    	  return res;
 	      }
+	      
 	      
 	      
 	      

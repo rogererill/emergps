@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.*;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -43,7 +44,7 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 
-public class Incidence extends MapActivity {
+public class Incidence extends MapActivity implements OnClickListener {
 	
 	static final int VAL_POS = 0;
 	static final int VAL_INCID = 1;
@@ -81,10 +82,16 @@ public class Incidence extends MapActivity {
 	}
 	};
    
+	View b_report;
    @Override
    public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.incidence);
+      
+		b_report = findViewById(R.id.fi_incid);
+		b_report.setOnClickListener(this);
+		b_report.setEnabled(false);
+		
       initService();
       initMapView();
       //initMyLocation();
@@ -188,6 +195,8 @@ public class Incidence extends MapActivity {
 		
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			b_report.setEnabled(true);
+			
 			Bundle extras = intent.getExtras();
 			//int id = extras.getInt(); FI INCIDENCIA
 			
@@ -328,6 +337,43 @@ public class Incidence extends MapActivity {
     e.printStackTrace(); 
     } 
     }
+
+    Activity activity = this;
+	@Override
+	public void onClick(View v) {
+		Intent i;
+		switch(v.getId()){
+		
+		case(R.id.fi_incid):
+	    	Thread t = new Thread(){
+    		public void run(){
+    			
+    			if(mBoundService.fiIncid()){
+    				//finish();
+    				activity.runOnUiThread(new Runnable() {
+    				    public void run() {
+    				        Toast.makeText(activity, "Incidència finalitzada", Toast.LENGTH_SHORT).show();
+    				        b_report.setEnabled(false);
+    				    }
+    				});
+    			} else {
+    				activity.runOnUiThread(new Runnable() {
+    				    public void run() {
+    				        Toast.makeText(activity, "Error al finalitzar", Toast.LENGTH_SHORT).show();
+    				    }
+    				});
+    			}
+
+    		};
+    		
+    	
+    	};
+    	t.start();
+
+		break;
+		}
+		
+	}
     
 }
 

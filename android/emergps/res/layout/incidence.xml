@@ -27,13 +27,10 @@
 
 
 	<Button android:id="@+id/fi_incid"
-		android:layout_width="wrap_content"
+		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:text="@string/fi_incid" />
-	<Button android:id="@+id/edit_incid"
-		android:layout_width="wrap_content"
-		android:layout_height="fill_parent"
-		android:text="@string/edit_incid" />
+
 
 	</upc.pxc.emergps.TransparentPanel>
 
