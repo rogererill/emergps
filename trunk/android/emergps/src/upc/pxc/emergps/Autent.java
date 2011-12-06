@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class Autent extends Activity implements OnClickListener{
 	final String TAG = "AUTENT";
@@ -64,9 +65,11 @@ public class Autent extends Activity implements OnClickListener{
     	
     }
     
-
+    Activity activity = this;
     private void Autentif(final String user, final String pass){
-    	
+    	tu.setText("");
+		tp.setText("");
+		
     	Thread t = new Thread(){
     		public void run(){
     			
@@ -75,9 +78,11 @@ public class Autent extends Activity implements OnClickListener{
     				startActivity(i);
     				finish();
     			} else {
-    				//tu.setText("");
-    				//tp.setText("");
-    				Log.d("onClick", "User o Pass incorrectes");
+    				activity.runOnUiThread(new Runnable() {
+    				    public void run() {
+    				        Toast.makeText(activity, "User o pass incorrectes", Toast.LENGTH_SHORT).show();
+    				    }
+    				});
     			}
 
     		};

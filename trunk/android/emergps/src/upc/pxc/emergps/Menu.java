@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.*;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -59,6 +60,7 @@ public class Menu extends Activity implements OnClickListener{
 		
 	}
 
+	Activity activity = this;
 	@Override
 	public void onClick(View v) {
 		Intent i;
@@ -78,15 +80,30 @@ public class Menu extends Activity implements OnClickListener{
 			startActivity(i);	
 		break;
 		case(R.id.exit_label):
+	    	Thread t = new Thread(){
+    		public void run(){
+    			
+    			if(mBoundService.logout()){
+    				finish();
+    			} else {
+    				activity.runOnUiThread(new Runnable() {
+    				    public void run() {
+    				        Toast.makeText(activity, "Error al logout", Toast.LENGTH_SHORT).show();
+    				    }
+    				});
+    			}
 
-			finish();
+    		};
+    		
+    	
+    	};
+    	t.start();
+
 		break;
 		}
 		
 	}
 
-	
-	
 	private void initService() {
 		
 		doBind();
@@ -101,7 +118,7 @@ public class Menu extends Activity implements OnClickListener{
 		public void onReceive(Context context, Intent intent) {
 			//Bundle extras = intent.getExtras();
 			//int id = extras.getInt();
-			Log.d(TAG, "REBUT!");
+			//Log.d(TAG, "REBUT!");
 			//TODO POSAR COLORS!!!!!!! AL BOTO SOBRE NOVA INCIDÈNCIA
 		}
 	};
