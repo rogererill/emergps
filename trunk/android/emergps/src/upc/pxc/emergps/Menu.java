@@ -82,8 +82,13 @@ public class Menu extends Activity implements OnClickListener{
 		case(R.id.exit_label):
 	    	Thread t = new Thread(){
     		public void run(){
-    			
+    			final int id = mBoundService.getId();
     			if(mBoundService.logout()){
+    				activity.runOnUiThread(new Runnable() {
+    				    public void run() {
+    				        Toast.makeText(activity, "Adéu usuari "+ id, Toast.LENGTH_SHORT).show();
+    				    }
+    				});
     				finish();
     			} else {
     				activity.runOnUiThread(new Runnable() {
@@ -119,7 +124,6 @@ public class Menu extends Activity implements OnClickListener{
 			//Bundle extras = intent.getExtras();
 			//int id = extras.getInt();
 			//Log.d(TAG, "REBUT!");
-			//TODO POSAR COLORS!!!!!!! AL BOTO SOBRE NOVA INCIDÈNCIA
 		}
 	};
 	

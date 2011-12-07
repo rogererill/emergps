@@ -69,11 +69,16 @@ public class Autent extends Activity implements OnClickListener{
     private void Autentif(final String user, final String pass){
     	tu.setText("");
 		tp.setText("");
-		
+		Toast.makeText(this, "Autentificant...", Toast.LENGTH_SHORT).show();
     	Thread t = new Thread(){
     		public void run(){
     			
     			if(mBoundService.autent(user, pass)){
+    				activity.runOnUiThread(new Runnable() {
+    				    public void run() {
+    				        Toast.makeText(activity, "Benvingut usuari "+ mBoundService.getId(), Toast.LENGTH_SHORT).show();
+    				    }
+    				});
     				Intent i = new Intent(Autent.this, Menu.class);
     				startActivity(i);
     				finish();
