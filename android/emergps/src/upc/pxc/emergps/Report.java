@@ -1,12 +1,15 @@
 package upc.pxc.emergps;
 
 import android.app.Activity;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,7 +21,8 @@ import android.util.Log;
 public class Report extends Activity implements OnClickListener{
 	//private Spinner spin;
 	private View button;
-	
+	private TextView tv;
+	private TextView lon, lat;
 	
 	final String TAG = "REPORT";
 	
@@ -51,9 +55,10 @@ public class Report extends Activity implements OnClickListener{
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.report);
+		initService();
 		findViews();
 		//setAdapters();
-		initService();
+
 		
 
 		
@@ -64,6 +69,15 @@ public class Report extends Activity implements OnClickListener{
 		button = findViewById(R.id.enviar_report);
 		button.setOnClickListener(this);
 		
+		tv = (TextView) findViewById(R.id.desc_report);
+		lon = (TextView)findViewById(R.id.long_report);
+		lat = (TextView)findViewById(R.id.lat_report);
+		
+		lon.setEnabled(false);
+		lat.setEnabled(false);
+		
+		lon.setText("Espereu..");
+		lat.setText("Espereu..");
 	}
 	/*
 	private void setAdapters(){
@@ -79,7 +93,14 @@ public class Report extends Activity implements OnClickListener{
 		Intent i;
 		switch(v.getId()){
 		case(R.id.enviar_report):
-			mBoundService.novaIncid(10.0f, 10.0f, "FOC!");
+			Toast.makeText(this, "Enviant incidència...", Toast.LENGTH_SHORT).show();
+			Location l = mBoundService.getLoc();
+			if(mBoundService.novaIncid(l.getLongitude(), l.getLatitude(), tv.getText().toString())){
+				Toast.makeText(this, "Enviada amb exit!", Toast.LENGTH_SHORT).show();
+				finish();
+			} else {
+				Toast.makeText(this, "Error en l'enviament", Toast.LENGTH_SHORT).show();
+			}
 		break;
 		}
 		
@@ -100,10 +121,9 @@ public class Report extends Activity implements OnClickListener{
 		
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			//Bundle extras = intent.getExtras();
-			//int id = extras.getInt();
-			//Log.d(TAG, "REBUT!");
-			//TODO POSAR COLORS!!!!!!! AL BOTO SOBRE NOVA INCIDÈNCIA
+
+			lon.setText(Double.toString(mBoundService.getLoc().getLongitude()));
+			lat.setText(Double.toString(mBoundService.getLoc().getLatitude()));
 		}
 	};
 	

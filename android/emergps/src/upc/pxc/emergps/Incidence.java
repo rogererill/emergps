@@ -165,15 +165,13 @@ public class Incidence extends MapActivity implements OnClickListener {
 			Log.d("DRAW ROUTE", "ERROR!");
 		}
 		
-		
-		// TODO TEMPROAL!
+
 	      GeoPoint p = LocToGeopoint(mBoundService.getLoc());
 	      controller.setCenter(p);
 	      map.postInvalidate();
    }
 
    
-   // TODO SEGURAMENT NO FUNCIONA BÉ!!
    private GeoPoint LocToGeopoint(Location l){
 	      GeoPoint p = new GeoPoint((int)Math.round(l.getLatitude()*1000000), (int)Math.round(l.getLongitude()*1000000));
 	      return p;
@@ -200,10 +198,8 @@ public class Incidence extends MapActivity implements OnClickListener {
 			Bundle extras = intent.getExtras();
 			//int id = extras.getInt(); FI INCIDENCIA
 			
-			// TODO
+			
 			String dadesStr = extras.getString(mBoundService.DADES_EXTRA);
-			//String dadesStr = "0&2.12354&41.42164&Atracament amb pistoles&12345&2.164607&41.424789&10045&0.0&0.0&10090&-122.084095&37.422005";
-			//Log.d("INCID", dadesStr);
 			dat = new Dades();
 			dat.setDades(dadesStr);
 			
@@ -349,13 +345,14 @@ public class Incidence extends MapActivity implements OnClickListener {
     		public void run(){
     			
     			if(mBoundService.fiIncid()){
-    				//finish();
+    				
     				activity.runOnUiThread(new Runnable() {
     				    public void run() {
     				        Toast.makeText(activity, "Incidència finalitzada", Toast.LENGTH_SHORT).show();
     				        b_report.setEnabled(false);
     				    }
     				});
+    				finish();
     			} else {
     				activity.runOnUiThread(new Runnable() {
     				    public void run() {

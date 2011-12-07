@@ -31,7 +31,7 @@ import android.widget.Toast;
 
 
 
-public class ComService extends Service implements Runnable{
+public class ComService extends Service{
 	String URL = "http://roger90.no-ip.org/HelloWorld/resources/emergps";  
 		final String TAG = "ComService";
 		private int id = -1;
@@ -45,7 +45,7 @@ public class ComService extends Service implements Runnable{
 		 public static final String DADES_EXTRA = "dades"; 
 		 private static final String ACK = "true";
 		 private static final int TIME_ENV_POS = 5000;
-		 private static final int TIME_DADES_INC = 10000;
+		 private static final int TIME_DADES_INC = 5000;
 		private static final int NOTIF_ALERTA_ID = 0;
 		 private String dades = "";
 		 
@@ -72,14 +72,10 @@ public class ComService extends Service implements Runnable{
 	            	public void run(){
 	            		while(true){
 	            			if(id != -1){
+	            				broadCastPos();
 			            		if(enviaPos()){
 			            			if(!incid)	notificar();
-			            				
-			            				
-		            				broadCastPos();
 		            				incid = true;
-		            				
-		            				
 		            			}
 	            			}
 		            		try {
@@ -132,8 +128,10 @@ public class ComService extends Service implements Runnable{
 	    	  CharSequence descripcion = "Nova incidència";
 	    	   
 	    	  Intent notIntent = new Intent(contexto,Incidence.class);
-	    	   
+	    	  notIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+	    	  
 	    	  PendingIntent contIntent = PendingIntent.getActivity(contexto, 0, notIntent, 0);
+
 	    	   
 	    	  notif.setLatestEventInfo(contexto, titulo, descripcion, contIntent);
 	    	  
@@ -144,6 +142,7 @@ public class ComService extends Service implements Runnable{
 	    	  //notif.defaults |= Notification.DEFAULT_SOUND;
 	    	  notif.defaults |= Notification.DEFAULT_VIBRATE;
 	    	  //notif.defaults |= Notification.DEFAULT_LIGHTS;
+	    	  
 	    	  
 	    	//Enviar notificación
 	    	  notManager.notify(NOTIF_ALERTA_ID, notif);
@@ -199,7 +198,7 @@ public class ComService extends Service implements Runnable{
 	    		            e.printStackTrace();  
 	    		        }  
 	    		        httpclient.getConnectionManager().shutdown();  
-	    		        Log.i("autent", result);  
+	    		        //Log.i("autent", result);  
 	    		
 	    		       
 	    		  
@@ -211,7 +210,6 @@ public class ComService extends Service implements Runnable{
 
 	    	  int aux = Integer.parseInt(result);
 	    	  if(aux < 10000 || aux >= 40000)	return false;
-	    	  // TODO Si ID no correcte, retornar false
 	    	  id = Integer.parseInt(result);
 	    	  return true;
 	      }
@@ -227,7 +225,7 @@ public class ComService extends Service implements Runnable{
 	       
 	          //Obtenemos la última posición conocida
 	          loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-	          // TODO
+
 	          if(loc == null){
 	        	  loc = new Location("AUX_PROVIDER");
     	          loc.setLatitude(41.4164d);	// POSICIO DE LES COTXERES
@@ -243,13 +241,13 @@ public class ComService extends Service implements Runnable{
 
 				@Override
 				public void onProviderDisabled(String provider) {
-					// TODO Auto-generated method stub
+
 					
 				}
 
 				@Override
 				public void onProviderEnabled(String provider) {
-					// TODO Auto-generated method stub
+
 					
 				}
 
@@ -257,7 +255,7 @@ public class ComService extends Service implements Runnable{
 				@Override
 				public void onStatusChanged(String provider, int status,
 						Bundle extras) {
-					// TODO Auto-generated method stub
+
 					
 				}
 	       
@@ -308,7 +306,6 @@ public class ComService extends Service implements Runnable{
 				}
 		    	 boolean ret = false;
 		    	 ret = result.equals("1");
-		    	 // TODO Retornar true si hi ha una nova incidència
 	    	  return ret;
 	      }
 	      
@@ -320,7 +317,7 @@ public class ComService extends Service implements Runnable{
 		    		       
 		    		        HttpGet request = new HttpGet(URL+"/inc_act");
 		    		        
-		    		        // TODO CAMBIAR 0 per ID
+
 		    		        request.addHeader("id", Integer.toString(id));
 		    				
 		    		        ResponseHandler<String> handler = new BasicResponseHandler();  
@@ -333,7 +330,7 @@ public class ComService extends Service implements Runnable{
 		    		            e.printStackTrace();  
 		    		        }  
 		    		        httpclient.getConnectionManager().shutdown();  
-		    		        Log.i("actIncid", result);  
+		    		        //Log.i("actIncid", result);  
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -363,7 +360,7 @@ public class ComService extends Service implements Runnable{
   		            e.printStackTrace();  
   		        }  
   		        httpclient.getConnectionManager().shutdown();  
-  		        Log.i("novaIncid", result);  
+  		        //Log.i("novaIncid", result);  
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -379,22 +376,19 @@ public class ComService extends Service implements Runnable{
 	    		  
   		        HttpClient httpclient = new DefaultHttpClient();  
   		       
-  		        HttpGet request = new HttpGet(URL+"/fi_inc");
+  		        HttpGet request = new HttpGet(URL+"/fin_inc");
   		        request.addHeader("id", Integer.toString(id));
   		        ResponseHandler<String> handler = new BasicResponseHandler();  
-  		        try {  
+  
   		        	
-  		            result = httpclient.execute(request, handler);  
-  		        } catch (ClientProtocolException e) {  
-  		            e.printStackTrace();  
-  		        } catch (IOException e) {  
-  		            e.printStackTrace();  
-  		        }  
+  		         result = httpclient.execute(request, handler);  
+
   		        httpclient.getConnectionManager().shutdown();  
-  		        Log.i("fiIncid", result);  
+  		        //Log.i("fiIncid", result);  
 
 				} catch (Exception e) {
 					e.printStackTrace();
+					//Log.i("fiIncid", "Error");
 				}
 	    	  res = result.equals(ACK);
 	    	  if(res){
@@ -407,7 +401,6 @@ public class ComService extends Service implements Runnable{
 	      public boolean logout(){
 	    	  boolean res = false;
 	    	  String result = "";
-	    	  Log.i("Logout", "INICI");  
 	    	  try {
 	    		  
   		        HttpClient httpclient = new DefaultHttpClient();  
@@ -421,13 +414,10 @@ public class ComService extends Service implements Runnable{
   		        result = httpclient.execute(request, handler);  
 
   		        httpclient.getConnectionManager().shutdown();  
-  		        Log.i("Logout", result);  
-  		      Log.i("Logout", "TRY");  
+
 				} catch (Exception e) {
 					e.printStackTrace();
-					Log.i("Logout", "CATCH");  
 				}
-	    	  Log.d("LOGOUT", result);
 	    	  res = result.equals(ACK);
 	    	  if(res){
 	    		  incid = false;
@@ -438,20 +428,11 @@ public class ComService extends Service implements Runnable{
 	      }
 	      
 	      
-	      
-	      
-	      //TODO eliminar run() i implements runnable
-		@Override
-		public void run() {
-			broadCastPos();
-			if(incid) broadCastDades();
-		}
-	      
+	     
 		private void broadCastPos(){
 			Intent intent = new Intent();
 			intent.setAction(POS_FILTER); //Define intent-filter
 			sendBroadcast(intent);
-			
 		}
 		
 		private void broadCastDades(){

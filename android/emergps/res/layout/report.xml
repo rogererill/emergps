@@ -9,6 +9,26 @@
         android:layout_width="wrap_content"
         android:layout_gravity="center"
         android:stretchColumns="2">
+                <TableRow>
+			<TextView  
+    			android:layout_width="fill_parent" 
+    			android:layout_height="wrap_content" 
+    			android:text="Longitud actual: " />
+			<EditText
+    			android:id="@+id/long_report"
+    			android:layout_height="wrap_content"
+    			android:layout_width="fill_parent" />
+    	</TableRow>
+    	        <TableRow>
+			<TextView  
+    			android:layout_width="fill_parent" 
+    			android:layout_height="wrap_content" 
+    			android:text="Latitud actual: " />
+			<EditText
+    			android:id="@+id/lat_report"
+    			android:layout_height="wrap_content"
+    			android:layout_width="fill_parent" />
+    	</TableRow>
         <TableRow>
 			<TextView  
     			android:layout_width="fill_parent" 
@@ -20,14 +40,6 @@
     			android:inputType="textUri"
     			android:layout_height="wrap_content"
     			android:layout_width="fill_parent" />
-    	</TableRow>
-    	<TableRow>
-			<TextView  
-    			android:layout_width="fill_parent" 
-    			android:layout_height="wrap_content" 
-    			android:text="@string/tipus_report" />
-			<Spinner
-    			android:id="@+id/tipus_report" />
     	</TableRow>
 
     		<Button
