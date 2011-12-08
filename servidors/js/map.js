@@ -16,6 +16,7 @@ var rutes = new Array();
 var id_incidencia_actual = 0;
 
 
+
 function timeMsg() {
 	//var t=setTimeout("alertMsg()",3000);
 	var t = setTimeout("mouRecursos()",2000);
@@ -66,23 +67,21 @@ function updateEstat() {
 		  logout.splice(0,1); //tenim logouts
 		  alert("logouts: "+ logout);
 		  
-		  /*ara cal fer 2 coses: 
-		   * 	1) crear la incidencia
-		   * 	2) assignar automaticament les unitats pertintents i notificar-ho al sv central
+		  
+		   /*Logouts - ara cal fer coses:
+		   * 	1) posar map:null al recurs
+		   * 	2) eliminar recurs del vector de recursos
+		   * 	3) enviar confirmacio al servidor central
 		   */
-		  
-		  // format de la incidencia: id,lat,lon,descripcio
-		  for (var i = 0; i < inc_noves.length; i+=4) {
-		  	var pos = new google.maps.LatLng(inc_noves[i+2],inc_noves[i+1]);
-		  	placeRandomMarker(pos,inc_noves[i],inc_noves[i+3]);
-		  	updateLinks(inc_noves[i+3]);
-		  	index++;
-		  	//falta assignar unitats a la incidencia (unitats que no estiguin ja assignades)
-		  }
+		  	
+		  /*//format logout: id_recurs
+		  for (var i = 0; i < logout.length; i++) {
+		  	logoutRecurs(logout[i]);
+		  	//falta enviar confirmacio cv central
+		  }	*/
 		  
 		  
-		  
-		  /*ara cal fer 3 coses:
+		  /*Acabar incidencies - ara cal fer 3 coses:
 		   * 	1) borrar la incidencia en questio del mapa
 		   * 	2) desasignar les unitas que estaven assignades a la incidencia
 		   * 	3) notificar al sv central la baixa de la incidencia
@@ -94,31 +93,38 @@ function updateEstat() {
 		  	//falta avisar servidor central
 		  }
 		  
-		  
-		  
-		  /*ara cal fer 1 coses:
+		   /*Login - ara cal fer 1 coses:
 		   * 	1) crear nous recursos al mapa 	
 		   */
 		  
 		  //format login: id,lat,lon
 		 
-		  for (var i = 0; i < login.length; i+=3) {
+		 /* for (var i = 0; i < login.length; i+=3) {
 		  	var pos_rec = new google.maps.LatLng();
-		  	logInRecurs(login[i],login[i+2],login[i+1])
-		  }
-		  		  
+		  	logInRecurs(login[i],login[i+2],login[i+1]);
+		  }*/
 		  
-		  /*ara cal fer coses:
-		   * 	1) posar map:null al recurs
-		   * 	2) eliminar recurs del vector de recursos
-		   * 	3) enviar confirmacio al servidor central
+		  	  logInRecurs(11,42.387917, 2.169919);
+	  logInRecurs(12,41.387917, 2);
+	  logInRecurs(13,41, 2.169919);	
+	  logInRecurs(12,41.39, 2);
+	  logInRecurs(13,41,2.19);
+		  
+		  /*Crear incidencies - ara cal fer 2 coses: 
+		   * 	1) crear la incidencia
+		   * 	2) assignar automaticament les unitats pertintents i notificar-ho al sv central
 		   */
-	
-		  //format logout: id_recurs
-		  for (var i = 0; i < logout.length; i++) {
-		  	logoutRecurs(logout[i]);
-		  	//falta enviar confirmacio cv central
-		  }		  		  
+		  
+		  // format de la incidencia: id,lat,lon,descripcio
+		  //for (var i = 0; i < inc_noves.length; i+=4) {
+		  	var i = 0;
+		  	var pos = new google.maps.LatLng(inc_noves[i+2],inc_noves[i+1]);
+		  	placeRandomMarker(pos,inc_noves[i],inc_noves[i+3]);
+		  	updateLinks(inc_noves[i+3]);
+		  	index++;
+		  	//distRecursos(inc_noves[i],pos);
+		  	//falta assignar unitats a la incidencia (unitats que no estiguin ja assignades)
+		  //}  		  
 		}
 		req.open("GET", url, true);
 		req.send();
@@ -242,14 +248,25 @@ function maxDistancia() {
 	return index;
 }
 
-function distRecursos() {
-	var posIncidencia = new google.maps.LatLng(41.387917, 2.169919);
+function distRecursos(id_inc,pos_incidencia) {
 	for (var i = 0; i < recursos.length; i++) {
-		calculateDistance(recursos[i].getPosition(),posIncidencia);
+		alert("el recurs amb id= " + recursos[i].getTitle() + ", te incidencia " + obteIdInc(recursos[i].getTitle()));
+		if (obteIdInc(recursos[i].getTitle()) == -1) calculateDistance(obteId(recursos[i].getTitle()),recursos[i].getPosition(),pos_incidencia);	
 	}
+	//assignarIncidencies(id_inc);
 }
+/*
+function assignarIncidencies() {
+	var id1 = ;
+	var id2 = ;
+	var id3 = ;
+	for (var i = 0; i < 3; i++) {
+		
+	}	
+}*/
 
-function calculateDistance(location1, location2) {
+function calculateDistance(id_recurs,location1, location2) {
+	alert("calcularem distancia");
 	directionsService = new google.maps.DirectionsService();
 	
 	var request = {
@@ -265,7 +282,7 @@ function calculateDistance(location1, location2) {
 			var distance = response.routes[0].legs[0].distance;
 			var durada = response.routes[0].legs[0].duration;
 			//alert ("la durada es " + durada.value);
-	      	var pos = afegeixDistancia(durada.value);
+	      	var pos = afegeixDistancia(distance.value);
 	      	if (pos != -1) {
 	      		directionsDisplay = new google.maps.DirectionsRenderer(
 				{
@@ -273,12 +290,17 @@ function calculateDistance(location1, location2) {
 			   		suppressInfoWindows: true
 				});
 		  		directionsDisplay.setDirections(response);
+		  		var ruta = {
+			  			cami: directionsDisplay,
+			  			recurs: id_recurs
+			  	};
 			  	if (pos == -2) {
-			  		rutes.push(directionsDisplay);
+			  		
+			  		rutes.push(ruta);
 			  		//alert("ha tret -2");
 			  	}
 			  	else {
-			  		rutes[pos] = directionsDisplay;
+			  		rutes[pos] = ruta;
 					//alert("ha tret guai");
 				}
 			}
@@ -288,6 +310,10 @@ function calculateDistance(location1, location2) {
 	   } 
 	   else alert("Error al calcular distancia");
 	});
+}
+
+function showAssignacions() {
+	for (var i = 0; i < rutes.length; i++) alert(rutes[i].recurs);
 }
 
 function afegeixDistancia(distancia) {
@@ -309,7 +335,7 @@ function min3Dists(distancia) {
 }
 
 function showRoute() {
-	for (var i = 0; i < rutes.length; i++) rutes[i].setMap(map);
+	for (var i = 0; i < rutes.length; i++) rutes[i].cami.setMap(map);
 }
 
 function placeRecurs(location) {
@@ -320,7 +346,7 @@ function placeRecurs(location) {
       position: location, 
       map: map,
       icon: image,
-      title: id_actual+"#0"
+      title: id_actual+"#-1"
   });
   
   var infowindow = new google.maps.InfoWindow({ 
@@ -381,10 +407,21 @@ function randomIncidencies() {
 }
 
 function randomRecursos() {
-	for (var i = 0; i < 10; i++) {
+	/*var location = new google.maps.LatLng(41.393062, 2.163788);
+	placeRecurs(location);
+	var location = new google.maps.LatLng(41.38498755231907, 2.1758079528808594);
+	placeRecurs(location);
+	var location = new google.maps.LatLng(41.394011, 2.112958);
+	placeRecurs(location);
+	var location = new google.maps.LatLng(41.38495535360129, 2.1345019340515137);
+	placeRecurs(location);*/
+	var location = new google.maps.LatLng(41.38597765510752, 2.1336543560028076);
+	placeRecurs(location);
+		
+	/*for (var i = 0; i < 10; i++) {
 		var location = new google.maps.LatLng(41.387917+(i/32)+Math.random()/3, 1.5-(i/64)+Math.random()/3);
 		placeRecurs(location);
-	}
+	}*/
 }
 
 function dibuixaCami(start,end) {
@@ -572,6 +609,7 @@ function logoutRecurs(id_recurs) {
 	//alert("nem a fer logout de " + id_recurs);
 	var index;
 	index = buscaRecursId(id_recurs);
+	alert("al fer logout, buscaRecursID =" + index);
 	//if (index =! -1) {
 		recursos[index].setMap(null);
 		recursos.splice(index,1);
@@ -580,6 +618,3 @@ function logoutRecurs(id_recurs) {
 	//else alert("error al logout recurs "+ id_recurs);
 }
 
-function loginRecurs(id_recurs) {
-	
-}

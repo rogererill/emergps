@@ -21,7 +21,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>EmerGPS</title>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;language=es"></script>
-    <script type="text/javascript" src="js/map.js"></script>
+    <script type="text/javascript" src="js/map2.js"></script>
     <script type="text/javascript" src="js/web-sv.js"></script>
     <script type="text/javascript" src="js/abaaso-min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css" />
@@ -66,15 +66,15 @@
 						<input type="button" onclick="showRoute()" id="moure" style="width:150px" title="moure" value="distancia" />												
 						<input type="button" onclick="distRecursos()" id="min" style="width:150px" title="min" value="min" />												
 						<input type="button" onclick="mouRecursos()" id="pos" style="width:150px" title="pos" value="pos" />												
-						<input type="button" onclick="cridar()" id="cr" style="width:150px" title="cr" value="crida" />												
+						<input type="button" onclick="showAssignacions()" id="cr" style="width:150px" title="cr" value="veure resultats dist" />												
 						<input type="button" onclick="updateEstat()" id="est" style="width:150px" title="est" value="estatt" />												
 						<input type="button" onclick="updatePosicions()" id="pos" style="width:150px" title="pos" value="pos" />												
 						<input type="button" onclick="deleteIncidencia(0)" id="de" style="width:150px" title="de" value="delete" />												
 
-						<input type="button" onclick="assignarInc(10003,777)" id="ass" style="width:150px" title="ass" value="assignar" />												
-						<input type="button" onclick="alliberarRecurs(10003)" id="all" style="width:150px" title="all" value="alliberar" />												
-						<input type="button" onclick="logoutRecurs(10003)" id="out" style="width:150px"  title="out" value="logout10003" />												
-						<input type="button" onclick="logInRecurs(10003,41.416,2.1345)" id="in" style="width:150px"  title="in" value="login10003" />												
+						<input type="button" onclick="assignarInc(19999,777)" id="ass" style="width:150px" title="ass" value="assignar" />												
+						<input type="button" onclick="alliberarRecurs(19999)" id="all" style="width:150px" title="all" value="alliberar" />												
+						<input type="button" onclick="logoutRecurs(19999)" id="out" style="width:150px"  title="out" value="logout19999" />												
+						<input type="button" onclick="logInRecurs(19999,41.416,2.1345)" id="in" style="width:150px"  title="in" value="login19999" />												
 					
 					</form>
 				</fieldset>
