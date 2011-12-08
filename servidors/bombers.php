@@ -71,6 +71,11 @@
 						<input type="button" onclick="updatePosicions()" id="pos" style="width:150px" title="pos" value="pos" />												
 						<input type="button" onclick="deleteIncidencia(0)" id="de" style="width:150px" title="de" value="delete" />												
 
+						<input type="button" onclick="assignarInc(10003,777)" id="ass" style="width:150px" title="ass" value="assignar" />												
+						<input type="button" onclick="alliberarRecurs(10003)" id="all" style="width:150px" title="all" value="alliberar" />												
+						<input type="button" onclick="logoutRecurs(10003)" id="out" style="width:150px"  title="out" value="logout10003" />												
+						<input type="button" onclick="logInRecurs(10003,41.416,2.1345)" id="in" style="width:150px"  title="in" value="login10003" />												
+					
 					</form>
 				</fieldset>
 				</div>
