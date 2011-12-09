@@ -261,20 +261,23 @@ function assignarIncidencies(id_inc) {
 	var text = "?id="+id_inc+"&id_ass=";
 	for (var i = 0; i < rutes.length; i++) {
 		assignarInc(rutes[i].recurs,id_inc);
-		text += "&"+rutes[i].recurs;
+		if(i < rutes.length-1) text += rutes[i].recurs+",";
+		else text += rutes[i].recurs;
 	}
 	alert(text);
 	rutes.splice(0,rutes.length);
 	distancies.splice(0,distancies.length);
 	alert("despres de fer splice, el vector de rutes queda am long= "+rutes.length);
-	
-	
-	//enviarAssignacio(text);	
+		
+	enviarAssignacio(text);	
 }
 
 function enviarAssignacio(atributs) {
+	alert("entrem a enviar assignacio del servei den roger, atributs= "+atributs);
 		var url_base = "http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web";
+		//atributs = "?id=1&id_ass=10002";
 		var url = url_base+atributs;
+		
 		var req = createRequest(); // defined above
 		// Create the callback:
 		req.onreadystatechange = function() {
@@ -359,8 +362,6 @@ function calculateDistance(id_recurs,location1, location2) {
 function showAssignacions() {
 	for (var i = 0; i < rutes.length; i++) alert(rutes[i].recurs);
 }
-
-
 
 function afegeixDistancia(distancia) {
 	if (distancies.length < 3) {
