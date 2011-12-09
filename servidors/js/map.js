@@ -562,9 +562,9 @@ function placeRandomMarker(location,id,info) {
   map.setCenter(location);
 }
 
-function enviaNovaIncidencia() {
+function enviaNovaIncidencia(lat,ln,descr) {
 	var url_base = "http://roger90.no-ip.org/HelloWorld/resources/emergps/new_inc_web";
-	var atributs = "?user=10033&posy=41.4755&posx=2.13568&com=Molt+maco+aixo";
+	var atributs = "?user=-1&posy="+lat+&posx=2.13568&com=Molt+maco+aixo";
 	
 		var url = url_base+atributs;
 		alert(url);
