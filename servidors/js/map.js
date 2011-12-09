@@ -560,11 +560,14 @@ function placeRandomMarker(location,id,info) {
   markers.push(marker);
   id_incidencia_actual = id;
   map.setCenter(location);
+  alert("crearem nova incidencia amb lat="+location.lat()+" i ln= "+location.lng() + " i info= "+info);
+  var id_inc = 0;
+  enviaNovaIncidencia(location.lat(),location.lng(),info); 
 }
 
 function enviaNovaIncidencia(lat,ln,descr) {
 	var url_base = "http://roger90.no-ip.org/HelloWorld/resources/emergps/new_inc_web";
-	var atributs = "?user=-1&posy="+lat+&posx=2.13568&com=Molt+maco+aixo";
+	var atributs = "?user=-1&posy="+lat+"&posx="+ln+"&com="+descr;
 	
 		var url = url_base+atributs;
 		alert(url);
@@ -580,6 +583,8 @@ function enviaNovaIncidencia(lat,ln,descr) {
 		  // Request successful, read the response
 		  var resp = req.responseText;	  
 		  alert(resp);  
+		  var pos = new google.maps.LatLng(lat,ln);
+		  distRecursos(resp,pos);
 		}
 		req.open("GET", url, true);
 		req.send();
