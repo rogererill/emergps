@@ -76,7 +76,7 @@
 						<input type="button" onclick="logoutRecurs(19999)" id="out" style="width:150px"  title="out" value="logout19999" />												
 						<input type="button" onclick="logInRecurs(19999,41.416,2.1345)" id="in" style="width:150px"  title="in" value="login19999" />												
 					
-						<input type="button" onclick="enviaNovaIncidencia()" id="in" style="width:150px"  title="in" value="enviaNovaIncidencia()" />												
+						<input type="button" onclick="enviaNovaIncidencia(1,2,3)" id="in" style="width:150px"  title="in" value="enviaNovaIncidencia()" />												
 
 					</form>
 				</fieldset>
