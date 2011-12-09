@@ -542,33 +542,8 @@ function eventLlista_inc(index) {
 
 //el nom pot crear confusio, no es crear un marker a una posicio random, sino que es posa a la posicio
 //location i amb titol:info
-function placeRandomMarker(location,id,info) {
-  var image = 'fire.png';
-  var marker = new google.maps.Marker({
-      position: location, 
-      map: map,
-      title: info+"#"+id+"",
-      icon: image
-  });
-  
-  var infowindow = new google.maps.InfoWindow({ 
-	content: info,
-    size: new google.maps.Size(50,50)
-  });
-  
-  google.maps.event.addListener(marker, 'click', function() {
-    infowindow.open(map,marker);
-    var info = marker.title;//.split("#");
-    //info = info[0];
-    document.getElementById('info').innerHTML = info;
-  });
-
-  bounds.extend(location);
-  markers.push(marker);
-  id_incidencia_actual = id;
-  map.setCenter(location);
+function placeRandomMarker(location,info) {
   alert("crearem nova incidencia amb lat="+location.lat()+" i ln= "+location.lng() + " i info= "+info);
-  var id_inc = 0;
   enviaNovaIncidencia(location.lat(),location.lng(),info); 
 }
 
@@ -591,10 +566,40 @@ function enviaNovaIncidencia(lat,ln,descr) {
 		  var resp = req.responseText;	  
 		  alert(resp);  
 		  var pos = new google.maps.LatLng(lat,ln);
-		  distRecursos(resp,pos);
+		  
+		  insereixIncidencia(pos,resp,descr);		  
+		  
 		}
 		req.open("GET", url, true);
 		req.send();
+}
+
+function insereixIncidencia(location,id,info) {
+	var image = 'fire.png';
+  	var marker = new google.maps.Marker({
+      position: location, 
+      map: map,
+      title: info+"#"+id+"",
+      icon: image
+  });
+  
+  var infowindow = new google.maps.InfoWindow({ 
+	content: info,
+    size: new google.maps.Size(50,50)
+  });
+  
+  google.maps.event.addListener(marker, 'click', function() {
+    infowindow.open(map,marker);
+    var info = marker.title;//.split("#");
+    //info = info[0];
+    document.getElementById('info').innerHTML = info;
+  });
+
+  bounds.extend(location);
+  markers.push(marker);
+  id_incidencia_actual = id;
+  map.setCenter(location);
+  distRecursos(id,location);
 }
 
 function placeMarker(location) {
