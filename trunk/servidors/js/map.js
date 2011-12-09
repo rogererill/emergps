@@ -247,7 +247,10 @@ function maxDistancia() {
 function distRecursos(id_inc,pos_incidencia) {
 	for (var i = 0; i < recursos.length; i++) {
 		//alert("el recurs amb id= " + recursos[i].getTitle() + ", te incidencia " + obteIdInc(recursos[i].getTitle()));
-		if (obteIdInc(recursos[i].getTitle()) == -1) calculateDistance(obteId(recursos[i].getTitle()),recursos[i].getPosition(),pos_incidencia);	
+		if (obteIdInc(recursos[i].getTitle()) == -1) {
+			alert("el recurs "+recursos[i].getTitle()+"sera candidat a assignarse a nova incidencia");
+			calculateDistance(obteId(recursos[i].getTitle()),recursos[i].getPosition(),pos_incidencia);	
+		}
 	}
 	
 	//alert("ara assignarem incidencia");
@@ -256,12 +259,16 @@ function distRecursos(id_inc,pos_incidencia) {
 
 function assignarIncidencies(id_inc) {
 	var text = "?id="+id_inc+"&id_ass=";
-	for (var i = 0; i < 3; i++) {
+	for (var i = 0; i < rutes.length; i++) {
 		assignarInc(rutes[i].recurs,id_inc);
 		text += "&"+rutes[i].recurs;
 	}
 	alert(text);
-	enviarAssignacio(text);
+	rutes.splice(0,rutes.length);
+	alert("despres de fer splice, el vector de rutes queda am long= "+rutes.length);
+	
+	
+	//enviarAssignacio(text);	
 }
 
 function enviarAssignacio(atributs) {
