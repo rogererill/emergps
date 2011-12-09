@@ -514,6 +514,7 @@ function crearIncidenciaGeocode(location) {
 	placeRandomMarker(location,id_incidencia_actual+1,info);
 	updateLinks(title);
 	index++;
+	enviaNovaIncidencia(location.lat(),location.lng(),info);
 }
 
 function codeAddress() { 
