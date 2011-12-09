@@ -33,7 +33,7 @@ function mouRecursos() {
 
 /* s'encarrega de les noves incidencies, el logins i logouts dels recursos */
 function updateEstat() {
-		alert("cridem updateStat");
+		//alert("cridem updateStat");
 		
 		var url = "http://roger90.no-ip.org/HelloWorld/resources/emergps/estat";
 		var req = createRequest(); // defined above
@@ -47,25 +47,25 @@ function updateEstat() {
 		  }
 		  // Request successful, read the response
 		  var resp = req.responseText;	  
-		  alert(resp);
+		  //alert(resp);
 		  resp = resp.split("#"); //separem en noves incidencies,les q hagin finalitzat, logins i logouts
 		  
 		  
 		  var inc_noves = resp[0].split("&");
 		  inc_noves.splice(0,1); //tenim incidencies  
-		  alert("noves inc: " + inc_noves);
+		  //alert("noves inc: " + inc_noves);
 		  
 		  var inc_fin = resp[1].split("&");
 		  inc_fin.splice(0,1); //tenim incidencies finalitzades
-		  alert("incidencies finalitzades: "+ inc_fin);
+		  //alert("incidencies finalitzades: "+ inc_fin);
 		  
 		  var login = resp[2].split("&");
 		  login.splice(0,1); //tenim logins
-		  alert("logins: "+ login);
+		  //alert("logins: "+ login);
 		  
 		  var logout = resp[3].split("&");
 		  logout.splice(0,1); //tenim logouts
-		  alert("logouts: "+ logout);
+		  //alert("logouts: "+ logout);
 		  
 		  
 		   /*Logouts - ara cal fer coses:
@@ -74,11 +74,11 @@ function updateEstat() {
 		   * 	3) enviar confirmacio al servidor central
 		   */
 		  	
-		  /*//format logout: id_recurs
-		  for (var i = 0; i < logout.length; i++) {
+		  //format logout: id_recurs
+		  /*for (var i = 0; i < logout.length; i++) {
 		  	logoutRecurs(logout[i]);
 		  	//falta enviar confirmacio cv central
-		  }	*/
+		  }	
 		  
 		  
 		  /*Acabar incidencies - ara cal fer 3 coses:
@@ -99,16 +99,12 @@ function updateEstat() {
 		  
 		  //format login: id,lat,lon
 		 
-		 /* for (var i = 0; i < login.length; i+=3) {
+		  for (var i = 0; i < login.length; i+=3) {
 		  	var pos_rec = new google.maps.LatLng();
 		  	logInRecurs(login[i],login[i+2],login[i+1]);
-		  }*/
+		  }
 		  
-		  	  logInRecurs(11,42.387917, 2.169919);
-	  logInRecurs(12,41.387917, 2);
-	  logInRecurs(13,41, 2.169919);	
-	  logInRecurs(12,41.39, 2);
-	  logInRecurs(13,41,2.19);
+
 		  
 		  /*Crear incidencies - ara cal fer 2 coses: 
 		   * 	1) crear la incidencia
@@ -122,7 +118,7 @@ function updateEstat() {
 		  	placeRandomMarker(pos,inc_noves[i],inc_noves[i+3]);
 		  	updateLinks(inc_noves[i+3]);
 		  	index++;
-		  	//distRecursos(inc_noves[i],pos);
+		  	distRecursos(inc_noves[i],pos);
 		  	//falta assignar unitats a la incidencia (unitats que no estiguin ja assignades)
 		  //}  		  
 		}
@@ -250,23 +246,37 @@ function maxDistancia() {
 
 function distRecursos(id_inc,pos_incidencia) {
 	for (var i = 0; i < recursos.length; i++) {
-		alert("el recurs amb id= " + recursos[i].getTitle() + ", te incidencia " + obteIdInc(recursos[i].getTitle()));
+		//alert("el recurs amb id= " + recursos[i].getTitle() + ", te incidencia " + obteIdInc(recursos[i].getTitle()));
 		if (obteIdInc(recursos[i].getTitle()) == -1) calculateDistance(obteId(recursos[i].getTitle()),recursos[i].getPosition(),pos_incidencia);	
 	}
-	//assignarIncidencies(id_inc);
+	
+	//alert("ara assignarem incidencia");
+	var t = setTimeout("showAssignacions()",1000);
+	t = setTimeout("assignarIncidencies("+id_inc+")",1000);
 }
-/*
-function assignarIncidencies() {
-	var id1 = ;
-	var id2 = ;
-	var id3 = ;
+
+function assignarIncidencies(id_inc) {
 	for (var i = 0; i < 3; i++) {
-		
-	}	
-}*/
+		assignarInc(rutes[i].recurs,id_inc);
+	}
+}
+
+//assignar una incidencia a un recurs 
+function assignarInc(id_recurs,id_inc) {
+	var index;
+	alert("assignem "+id_recurs+" a incidencia " + id_inc);
+	index = buscaRecursId(id_recurs);
+	if(index != -1) {
+			var title = recursos[index].getTitle().split("#");
+			title = title[0]+"#"+id_inc+"";
+			recursos[index].setTitle(title);	
+			alert("s'ha assignat al recurs num " + id_recurs + " la incidencia num " + recursos[index].getTitle());		
+	}
+	else alert("error al assignar incidencia a recurs "+ id_recurs);
+}
 
 function calculateDistance(id_recurs,location1, location2) {
-	alert("calcularem distancia");
+	//alert("calcularem distancia");
 	directionsService = new google.maps.DirectionsService();
 	
 	var request = {
@@ -282,7 +292,7 @@ function calculateDistance(id_recurs,location1, location2) {
 			var distance = response.routes[0].legs[0].distance;
 			var durada = response.routes[0].legs[0].duration;
 			//alert ("la durada es " + durada.value);
-	      	var pos = afegeixDistancia(distance.value);
+	      	var pos = afegeixDistancia(durada.value);
 	      	if (pos != -1) {
 	      		directionsDisplay = new google.maps.DirectionsRenderer(
 				{
@@ -364,7 +374,6 @@ function placeRecurs(location) {
 }
 
 function logInRecurs(id,lat,ln) {	
-	alert("fem login");
 	var location = new google.maps.LatLng(lat,ln);
 	
 	var image = 'cotxe_bombers.png';
@@ -388,7 +397,7 @@ function logInRecurs(id,lat,ln) {
 		  
 	bounds.extend(location);
 	recursos.push(marker);
-	alert("em fet login");
+	//alert("em fet login");
 }
 
 function randomIncidencies() {
@@ -561,19 +570,7 @@ function buscaRecursId(id_recurs) {
 	return -1;
 }
 
-//assignar una incidencia a un recurs 
-function assignarInc(id_recurs,id_inc) {
-	var index;
-	alert("assignem "+id_recurs+" a incidencia " + id_inc);
-	index = buscaRecursId(id_recurs);
-	if(index != -1) {
-			var title = recursos[index].getTitle().split("#");
-			title = title[0]+"#"+id_inc+"";
-			recursos[index].setTitle(title);	
-			alert("s'ha assignat al recurs num " + id_recurs + " la incidencia num " + recursos[index].getTitle());		
-	}
-	else alert("error al assignar incidencia a recurs "+ id_recurs);
-}
+
 
 //desasignar qualsevol el recurs duna incidencia
 function alliberarRecurs(id_recurs) {
