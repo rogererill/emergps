@@ -251,14 +251,37 @@ function distRecursos(id_inc,pos_incidencia) {
 	}
 	
 	//alert("ara assignarem incidencia");
-	var t = setTimeout("showAssignacions()",1000);
 	t = setTimeout("assignarIncidencies("+id_inc+")",1000);
 }
 
 function assignarIncidencies(id_inc) {
+	var text = "?id="+id_inc+"&id_ass=";
 	for (var i = 0; i < 3; i++) {
 		assignarInc(rutes[i].recurs,id_inc);
+		text += "&"+rutes[i].recurs;
 	}
+	alert(text);
+	enviarAssignacio(text);
+}
+
+function enviarAssignacio(atributs) {
+		var url_base = "http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web";
+		var url = url_base+atributs;
+		var req = createRequest(); // defined above
+		// Create the callback:
+		req.onreadystatechange = function() {
+		  if (req.readyState != 4) return; // Not there yet
+		  if (req.status != 200) {
+			// Handle request failure here...
+			alert(req.status);
+			return;
+		  }
+		  // Request successful, read the response
+		  var resp = req.responseText;	  
+		  alert(resp);  
+		}
+		req.open("GET", url, true);
+		req.send();
 }
 
 //assignar una incidencia a un recurs 
@@ -537,6 +560,29 @@ function placeRandomMarker(location,id,info) {
   markers.push(marker);
   id_incidencia_actual = id;
   map.setCenter(location);
+}
+
+function enviaNovaIncidencia() {
+	var url_base = "http://roger90.no-ip.org/HelloWorld/resources/emergps/new_inc_web";
+	var atributs = "?user=10033&posy=41.4755&posx=2.13568&com=Molt+maco+aixo";
+	
+		var url = url_base+atributs;
+		alert(url);
+		var req = createRequest(); // defined above
+		// Create the callback:
+		req.onreadystatechange = function() {
+		  if (req.readyState != 4) return; // Not there yet
+		  if (req.status != 200) {
+			// Handle request failure here...
+			alert(req.status);
+			return;
+		  }
+		  // Request successful, read the response
+		  var resp = req.responseText;	  
+		  alert(resp);  
+		}
+		req.open("GET", url, true);
+		req.send();
 }
 
 function placeMarker(location) {
