@@ -501,9 +501,9 @@ function crearIncidencia() {
 	var tIni = horaActual();
 	var info = creaInfo(title,"-",tIni);
 	
-	placeRandomMarker(location,id_incidencia_actual+1,info);
 	updateLinks(title);
 	index++;
+	enviaNovaIncidencia(location.lat(),location.lng(),info);
 }
 
 function crearIncidenciaGeocode(location) {
@@ -542,41 +542,9 @@ function eventLlista_inc(index) {
 
 //el nom pot crear confusio, no es crear un marker a una posicio random, sino que es posa a la posicio
 //location i amb titol:info
-function placeRandomMarker(location,info) {
-  alert("crearem nova incidencia amb lat="+location.lat()+" i ln= "+location.lng() + " i info= "+info);
-  enviaNovaIncidencia(location.lat(),location.lng(),info); 
-}
-
-function enviaNovaIncidencia(lat,ln,descr) {
-	var url_base = "http://roger90.no-ip.org/HelloWorld/resources/emergps/new_inc_web";
-	var atributs = "?user=-1&posy="+lat+"&posx="+ln+"&com="+descr;
-	
-		var url = url_base+atributs;
-		alert(url);
-		var req = createRequest(); // defined above
-		// Create the callback:
-		req.onreadystatechange = function() {
-		  if (req.readyState != 4) return; // Not there yet
-		  if (req.status != 200) {
-			// Handle request failure here...
-			alert(req.status);
-			return;
-		  }
-		  // Request successful, read the response
-		  var resp = req.responseText;	  
-		  alert(resp);  
-		  var pos = new google.maps.LatLng(lat,ln);
-		  
-		  insereixIncidencia(pos,resp,descr);		  
-		  
-		}
-		req.open("GET", url, true);
-		req.send();
-}
-
-function insereixIncidencia(location,id,info) {
-	var image = 'fire.png';
-  	var marker = new google.maps.Marker({
+function placeRandomMarker(location,id,info) {
+  var image = 'fire.png';
+  var marker = new google.maps.Marker({
       position: location, 
       map: map,
       title: info+"#"+id+"",
@@ -599,7 +567,33 @@ function insereixIncidencia(location,id,info) {
   markers.push(marker);
   id_incidencia_actual = id;
   map.setCenter(location);
-  distRecursos(id,location);
+  alert("crearem nova incidencia amb lat="+location.lat()+" i ln= "+location.lng() + " i info= "+info);
+}
+
+function enviaNovaIncidencia(lat,ln,descr) {
+	var url_base = "http://roger90.no-ip.org/HelloWorld/resources/emergps/new_inc_web";
+	var atributs = "?user=-1&posy="+lat+"&posx="+ln+"&com="+descr;
+	
+		var url = url_base+atributs;
+		alert(url);
+		var req = createRequest(); // defined above
+		// Create the callback:
+		req.onreadystatechange = function() {
+		  if (req.readyState != 4) return; // Not there yet
+		  if (req.status != 200) {
+			// Handle request failure here...
+			alert(req.status);
+			return;
+		  }
+		  // Request successful, read the response
+		  var resp = req.responseText;	  
+		  alert(resp);  
+		  var pos = new google.maps.LatLng(lat,ln);
+		  placeRandomMarker(pos,resp,descr);
+		  distRecursos(resp,pos);
+		}
+		req.open("GET", url, true);
+		req.send();
 }
 
 function placeMarker(location) {
