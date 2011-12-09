@@ -7,14 +7,17 @@ var geocoder = new google.maps.Geocoder();
 var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
 var recursos = new Array();
-var recursos_ocupats = new Array();
-var id_actual = 10000;
 var distancies = new Array();
 var dist_actual;
 var pos = 0;
 var rutes = new Array();
 var id_incidencia_actual = 0;
 
+function showRecursos() {
+	var text = "";
+	for (var i = 0; i < recursos.length;i++) text+=recursos[i].getTitle() + "<br>";
+	alert(text);
+}
 
 function timeMsg() {
 ﻿  //var t=setTimeout("alertMsg()",3000);
@@ -324,11 +327,13 @@ function logInRecurs(id,lat,ln) {﻿
 function placeRecurs(id,location) {
   var image = 'cotxe_bombers.png';
   
+  var idchar = id+"#-1";
+  
   var marker = new google.maps.Marker({
       position: location, 
       map: map,
       icon: image,
-      title: "ola que tal"
+      title: idchar
   });
   
   var infowindow = new google.maps.InfoWindow({ 
@@ -340,7 +345,6 @@ function placeRecurs(id,location) {
     infowindow.open(map,marker);
   });
 ﻿    
-  id_actual++;
   bounds.extend(location);
   recursos.push(marker);
 }
