@@ -76,7 +76,7 @@
 						<input type="button" onclick="logoutRecurs(19999)" id="out" style="width:150px"  title="out" value="logout19999" />												
 						<input type="button" onclick="logInRecurs(19999,41.416,2.1345)" id="in" style="width:150px"  title="in" value="login19999" />												
 					
-						<input type="button" onclick="distancesLong()" id="in" style="width:150px"  title="in" value="distancesLong()" />												
+						<input type="button" onclick="enviarAssignacio('?id=7&id_ass=10002,10004,10005')" id="in" style="width:150px"  title="in" value="enviarAssignacio()" />												
 
 					</form>
 				</fieldset>
