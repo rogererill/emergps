@@ -265,6 +265,7 @@ function assignarIncidencies(id_inc) {
 	}
 	alert(text);
 	rutes.splice(0,rutes.length);
+	distancies.splice(0,distancies.length);
 	alert("despres de fer splice, el vector de rutes queda am long= "+rutes.length);
 	
 	
@@ -323,6 +324,7 @@ function calculateDistance(id_recurs,location1, location2) {
 			var durada = response.routes[0].legs[0].duration;
 			//alert ("la durada es " + durada.value);
 	      	var pos = afegeixDistancia(durada.value);
+	      	alert("al calcular la distancia del recurs "+ id_recurs+" la posicio ha donat ");
 	      	if (pos != -1) {
 	      		directionsDisplay = new google.maps.DirectionsRenderer(
 				{
@@ -335,15 +337,17 @@ function calculateDistance(id_recurs,location1, location2) {
 			  			recurs: id_recurs
 			  	};
 			  	if (pos == -2) {
-			  		
+			  		alert("-2");
 			  		rutes.push(ruta);
 			  		//alert("ha tret -2");
 			  	}
 			  	else {
+			  		alert("un numero != -2,-1");
 			  		rutes[pos] = ruta;
 					//alert("ha tret guai");
 				}
 			}
+			else alert("-1");
 			//else alert("ha tret -1");
 	      //distance += "The aproximative driving time is: "+response.routes[0].legs[0].duration.text;
 	      document.getElementById("info").innerHTML = distance.value;	      
@@ -355,6 +359,8 @@ function calculateDistance(id_recurs,location1, location2) {
 function showAssignacions() {
 	for (var i = 0; i < rutes.length; i++) alert(rutes[i].recurs);
 }
+
+
 
 function afegeixDistancia(distancia) {
 	if (distancies.length < 3) {
@@ -376,6 +382,10 @@ function min3Dists(distancia) {
 
 function showRoute() {
 	for (var i = 0; i < rutes.length; i++) rutes[i].cami.setMap(map);
+}
+
+function distancesLong() {
+	alert(distancies.length);
 }
 
 function placeRecurs(location) {
@@ -666,8 +676,8 @@ function logoutRecurs(id_recurs) {
 	index = buscaRecursId(id_recurs);
 	alert("al fer logout, buscaRecursID =" + index);
 	//if (index =! -1) {
-		recursos[index].setMap(null);
-		recursos.splice(index,1);
+	recursos[index].setMap(null);
+	recursos.splice(index,1);
 		//alert("hem eliminat incidencia recurs correctament");		
 	//}
 	//else alert("error al logout recurs "+ id_recurs);
