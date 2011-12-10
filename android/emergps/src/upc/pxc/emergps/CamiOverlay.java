@@ -72,7 +72,7 @@ paint.setColor(defaultColor);
 RectF oval=new RectF(point.x - mRadius, point.y - mRadius, 
 point.x + mRadius, point.y + mRadius); 
 // start point 
-canvas.drawOval(oval, paint); 
+//canvas.drawOval(oval, paint); 
 } 
 // mode=2&#65306;path 
 else if(mode==2) 
@@ -105,7 +105,7 @@ RectF oval=new RectF(point2.x - mRadius,point2.y - mRadius,
 point2.x + mRadius,point2.y + mRadius); 
 /* end point */ 
 paint.setAlpha(255); 
-canvas.drawOval(oval, paint); 
+//canvas.drawOval(oval, paint); 
 } 
 } 
 return super.draw(canvas, mapView, shadow, when); 

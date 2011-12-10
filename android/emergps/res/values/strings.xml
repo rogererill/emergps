@@ -10,7 +10,7 @@
     <string name="report_label">Reportar</string>
     <string name="incid_label">Incidència</string>
     <string name="log_label">Log</string>
-    <string name="exit_label">Sortir</string>
+    <string name="exit_label">Logout</string>
     <string name="fi_incid">Fi incidència</string>
     <string name="edit_incid">Edita incidència</string>
     <string name="desc_report">Descripció </string>

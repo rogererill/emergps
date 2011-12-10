@@ -59,7 +59,6 @@ public class Report extends Activity implements OnClickListener{
 		findViews();
 		//setAdapters();
 
-		
 
 		
 	}

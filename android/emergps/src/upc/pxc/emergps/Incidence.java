@@ -104,9 +104,10 @@ public class Incidence extends MapActivity implements OnClickListener {
       controller = map.getController();
       map.setSatellite(true);
       map.setBuiltInZoomControls(true);
-      controller.setZoom(12);
+      controller.setZoom(13);
    }
 
+   
    private void initMyLocation() {
       final MyLocationOverlay overlay = new MyLocationOverlay(this, map);
       overlay.enableMyLocation();
@@ -120,6 +121,8 @@ public class Incidence extends MapActivity implements OnClickListener {
       });
       map.getOverlays().add(overlay);
    }
+   
+   
    
    private void updateIncidence(){
 		List<Overlay> capas = map.getOverlays();
@@ -165,7 +168,6 @@ public class Incidence extends MapActivity implements OnClickListener {
 			Log.d("DRAW ROUTE", "ERROR!");
 		}
 		
-
 	      GeoPoint p = LocToGeopoint(mBoundService.getLoc());
 	      controller.setCenter(p);
 	      map.postInvalidate();
