@@ -76,7 +76,7 @@ function updateEstat() {
 		   */
 		  	
 		  //format logout: id_recurs
-		  /*for (var i = 0; i < logout.length; i++) {
+		  for (var i = 0; i < logout.length; i++) {
 		  	logoutRecurs(logout[i]);
 		  	//falta enviar confirmacio cv central
 		  }	
@@ -124,11 +124,11 @@ function updateEstat() {
 		}
 		req.open("GET", url, true);
 		req.send();
-		//var s = setTimeout("updateEstat()",5000);
+		var s = setTimeout("updateEstat()",5000);
 }
 
 function updatePosicions() {
-		alert("cridem getPosicions");
+		//alert("cridem getPosicions");
 		var url = "http://roger90.no-ip.org/HelloWorld/resources/emergps/posicions";
 		//var url = "http://mihizawi.redirectme.net/HelloWorld/resources/emergps/posicions";
 		var req = createRequest(); // defined above
@@ -137,14 +137,14 @@ function updatePosicions() {
 		  if (req.readyState != 4) return; // Not there yet
 		  if (req.status != 200) {
 			// Handle request failure here...
-			alert(req.status);
+			//alert(req.status);
 			return;
 		  }
 		  // Request successful, read the response
 		  var resp = req.responseText;	  
 		  resp = resp.split("&");
 		  resp.splice(0,1); //ara ja tenim a resp, cada posicio: id,lat,lon,id,lat,lon... etc
-		  alert(resp);
+		  //alert(resp);
 		  
 		  for (var i = 0; i < resp.length; i+=3) {
 		  	for (var j = 0; j < recursos.length; j++) {
@@ -183,7 +183,7 @@ function mouRecurs(pos) {
 	
 	var text = "primera posicio: " + location.lat() + ", " + location.lng() + ". I segona posicio: " + location2.lat() + ", " + location2.lng();
 	document.getElementById("info").innerHTML = text;
-	//var t = setTimeout("mouRecursos()",2000);
+	var t = setTimeout("mouRecursos()",2000);
 }
 /*
 function alertMsg() {
@@ -229,6 +229,8 @@ function initialize() {
   	}
   	document.getElementById("info").innerHTML = text;
   	//enquesta();
+  	var t = setTimeout("updatePosicions()",2000);
+  	var s = setTimeout("updateEstat()",5000);
 }
 
 function maxDistancia() {
@@ -251,7 +253,7 @@ function distRecursos(id_inc,pos_incidencia) {
 	for (var i = 0; i < recursos.length; i++) {
 		//alert("el recurs amb id= " + recursos[i].getTitle() + ", te incidencia " + obteIdInc(recursos[i].getTitle()));
 		if (obteIdInc(recursos[i].getTitle()) == -1) {
-			alert("el recurs "+recursos[i].getTitle()+"sera candidat a assignarse a nova incidencia");
+			//alert("el recurs "+recursos[i].getTitle()+"sera candidat a assignarse a nova incidencia");
 			calculateDistance(obteId(recursos[i].getTitle()),recursos[i].getPosition(),pos_incidencia);	
 		}
 	}
@@ -270,8 +272,8 @@ function assignarIncidencies(id_inc) {
 	alert(text);
 	rutes.splice(0,rutes.length);
 	distancies.splice(0,distancies.length);
-	alert("despres de fer splice, el vector de rutes queda am long= "+rutes.length);
-		
+	//alert("despres de fer splice, el vector de rutes queda am long= "+rutes.length);
+	alert("la info que usarem per asignar sera: " + text);
 	enviarAssignacio(text);	
 }
 
@@ -657,11 +659,13 @@ function alliberarRecurs(id_recurs) {
 }
 
 function deleteIncidencia(id_inc) {
+	alert("anem a donar de baixa la incidencia num " + id_inc);
 	for (var i = 0; i < markers.length; i++) {
 		var id = markers[i].getTitle();
 		id = id.split("#");
 		id = id[1];
 		if (id == id_inc) {
+			alert("efectivament donarem de baixa la num " + id);
 			markers[i].setMap(null);
 			markers.splice(i,1);
 			alert("hem eliminat incidencia correctament");
@@ -669,7 +673,8 @@ function deleteIncidencia(id_inc) {
 	}
 	for (var j = 0; j < recursos.length; j++) {
 		if (obteIdInc(recursos[j].getTitle()) == id_inc) {
-			alliberarRecurs(j);
+			alert("alliberarem el recurs " + recursos[j].getTitle());
+			logoutRecurs(j);
 		}
 	}
 }
