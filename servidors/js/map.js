@@ -17,9 +17,9 @@ var id_incidencia_actual = 0;
 
 
 
-function timeMsg() {
-	//var t=setTimeout("alertMsg()",3000);
-	var t = setTimeout("mouRecursos()",2000);
+function enquesta() {
+	var s = setTimeout("updateEstat()",5000);
+	var t = setTimeout("updatePosicions()",2000);
 }
 
 function mouRecursos() {
@@ -36,6 +36,7 @@ function updateEstat() {
 		//alert("cridem updateStat");
 		
 		var url = "http://roger90.no-ip.org/HelloWorld/resources/emergps/estat";
+		//var url = "http://mihizawi.redirectme.net/HelloWorld/resources/emergps/estat";
 		var req = createRequest(); // defined above
 		// Create the callback:
 		req.onreadystatechange = function() {
@@ -47,7 +48,7 @@ function updateEstat() {
 		  }
 		  // Request successful, read the response
 		  var resp = req.responseText;	  
-		  //alert(resp);
+		  alert(resp);
 		  resp = resp.split("#"); //separem en noves incidencies,les q hagin finalitzat, logins i logouts
 		  
 		  
@@ -112,23 +113,24 @@ function updateEstat() {
 		   */
 		  
 		  // format de la incidencia: id,lat,lon,descripcio
-		  //for (var i = 0; i < inc_noves.length; i+=4) {
-		  	var i = 0;
+		  for (var i = 0; i < inc_noves.length; i+=4) {
+		  	//var i = 0;
 		  	var pos = new google.maps.LatLng(inc_noves[i+2],inc_noves[i+1]);
 		  	placeRandomMarker(pos,inc_noves[i],inc_noves[i+3]);
 		  	updateLinks(inc_noves[i+3]);
 		  	index++;
 		  	distRecursos(inc_noves[i],pos);
-		  	//falta assignar unitats a la incidencia (unitats que no estiguin ja assignades)
-		  //}  		  
+		  }  		  
 		}
 		req.open("GET", url, true);
 		req.send();
+		//var s = setTimeout("updateEstat()",5000);
 }
 
 function updatePosicions() {
 		alert("cridem getPosicions");
 		var url = "http://roger90.no-ip.org/HelloWorld/resources/emergps/posicions";
+		//var url = "http://mihizawi.redirectme.net/HelloWorld/resources/emergps/posicions";
 		var req = createRequest(); // defined above
 		// Create the callback:
 		req.onreadystatechange = function() {
@@ -153,7 +155,7 @@ function updatePosicions() {
 		  		}
 		  	}
 		  }
-		  
+		  var t = setTimeout("updatePosicions()",2000);
 		}
 		req.open("GET", url, true);
 		req.send();
@@ -226,6 +228,7 @@ function initialize() {
   		text += recursos[i].getTitle();
   	}
   	document.getElementById("info").innerHTML = text;
+  	//enquesta();
 }
 
 function maxDistancia() {
