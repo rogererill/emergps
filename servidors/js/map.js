@@ -48,7 +48,7 @@ function updateEstat() {
 		  }
 		  // Request successful, read the response
 		  var resp = req.responseText;	  
-		  alert(resp);
+		  if (resp != "###") alert(resp);
 		  resp = resp.split("#"); //separem en noves incidencies,les q hagin finalitzat, logins i logouts
 		  
 		  
@@ -250,16 +250,18 @@ function maxDistancia() {
 }
 
 function distRecursos(id_inc,pos_incidencia) {
+	var cont = 0;
 	for (var i = 0; i < recursos.length; i++) {
 		//alert("el recurs amb id= " + recursos[i].getTitle() + ", te incidencia " + obteIdInc(recursos[i].getTitle()));
 		if (obteIdInc(recursos[i].getTitle()) == -1) {
 			//alert("el recurs "+recursos[i].getTitle()+"sera candidat a assignarse a nova incidencia");
 			calculateDistance(obteId(recursos[i].getTitle()),recursos[i].getPosition(),pos_incidencia);	
+			cont++;
 		}
 	}
 	
 	//alert("ara assignarem incidencia");
-	t = setTimeout("assignarIncidencies("+id_inc+")",1000);
+	if (cont > 0) t = setTimeout("assignarIncidencies("+id_inc+")",1000);
 }
 
 function assignarIncidencies(id_inc) {
@@ -674,7 +676,7 @@ function deleteIncidencia(id_inc) {
 	for (var j = 0; j < recursos.length; j++) {
 		if (obteIdInc(recursos[j].getTitle()) == id_inc) {
 			alert("alliberarem el recurs " + recursos[j].getTitle());
-			logoutRecurs(j);
+			alliberarRecurs(j);
 		}
 	}
 }
