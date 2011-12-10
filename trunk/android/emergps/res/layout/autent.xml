@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:background="@color/background"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="center">
+    <ImageView 
+   android:id="@+id/emergps_image"
+   android:src="@drawable/emergps"
+   android:layout_width="wrap_content"
+   android:layout_height="wrap_content"
+   />
     <EditText
     	android:id="@+id/text_user"
     	android:hint="@string/original_user"

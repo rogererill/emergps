@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 public class ComService extends Service{
 	String URL = "http://roger90.no-ip.org/HelloWorld/resources/emergps";  
+	//String URL = "http://mihizawi.redirectme.net/HelloWorld/resources/emergps";  
 		final String TAG = "ComService";
 		private int id = -1;
 		private int nIncid = -1;
@@ -93,6 +94,7 @@ public class ComService extends Service{
 	            		while(true){
 	            			if(incid){
 	            				dades = actIncid();
+	            				Log.d("THREAD", dades);
 	            				//handler.post(r);
 	            				broadCastDades();
 	            			}
@@ -107,6 +109,7 @@ public class ComService extends Service{
 	            };
 	            dades_inc.start();
 	      }	      
+	      
 	      
 	      private void notificar(){
 	    	  
@@ -330,13 +333,16 @@ public class ComService extends Service{
 		    		            e.printStackTrace();  
 		    		        }  
 		    		        httpclient.getConnectionManager().shutdown();  
-		    		        //Log.i("actIncid", result);  
+		    		        Log.i("actIncid", result);  
 
 				} catch (Exception e) {
 					e.printStackTrace();
+					Log.i("actIncid(ERROR)", result);  
 				}
 	    	  return result;
 	      }
+	      
+	     
 	      
 	      public boolean novaIncid(double posX, double posY, String desc){
 	    	  boolean res = false;
@@ -398,6 +404,8 @@ public class ComService extends Service{
 	    	  return res;
 	      }
 	      
+	     
+	      
 	      public boolean logout(){
 	    	  boolean res = false;
 	    	  String result = "";
@@ -410,7 +418,7 @@ public class ComService extends Service{
   		        ResponseHandler<String> handler = new BasicResponseHandler();  
 
   		        
-  		        
+  		       
   		        result = httpclient.execute(request, handler);  
 
   		        httpclient.getConnectionManager().shutdown();  
@@ -419,7 +427,7 @@ public class ComService extends Service{
 					e.printStackTrace();
 				}
 	    	  res = result.equals(ACK);
-	    	  if(res){
+	    	  if(res){	//TODO
 	    		  incid = false;
 	    		  id = -1;
 	    		  nIncid = -1;
@@ -427,7 +435,7 @@ public class ComService extends Service{
 	    	  return res;
 	      }
 	      
-	      
+	     
 	     
 		private void broadCastPos(){
 			Intent intent = new Intent();
@@ -436,14 +444,16 @@ public class ComService extends Service{
 		}
 		
 		private void broadCastDades(){
-			if(dades.equals("-1")){
+			if(dades.equals("-1") || dades.equals("0")){
 				incid = false;
 				nIncid = -1;
+				Log.d("BroadCastDades", "Error del servidor");
+			} else {
+				Intent intent = new Intent();
+				intent.putExtra(DADES_EXTRA, dades);
+				intent.setAction(DADES_FILTER); //Define intent-filter
+				sendBroadcast(intent);
+	
 			}
-			Intent intent = new Intent();
-			intent.putExtra(DADES_EXTRA, dades);
-			intent.setAction(DADES_FILTER); //Define intent-filter
-			sendBroadcast(intent);
-			
 		}
 	}

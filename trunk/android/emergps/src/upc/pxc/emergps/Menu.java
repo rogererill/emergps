@@ -1,6 +1,8 @@
 package upc.pxc.emergps;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.*;
@@ -9,6 +11,7 @@ import android.widget.Toast;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -51,8 +54,8 @@ public class Menu extends Activity implements OnClickListener{
 		b_report.setOnClickListener(this);
 		View b_incid = findViewById(R.id.incid_label);
 		b_incid.setOnClickListener(this);
-		View b_log = findViewById(R.id.log_label);
-		b_log.setOnClickListener(this);
+		//View b_log = findViewById(R.id.log_label);
+		//b_log.setOnClickListener(this);
 		View b_exit = findViewById(R.id.exit_label);
 		b_exit.setOnClickListener(this);
 		
@@ -75,10 +78,10 @@ public class Menu extends Activity implements OnClickListener{
 			i = new Intent(this, Incidence.class);
 			startActivity(i);
 		break;
-		case(R.id.log_label):
-			i = new Intent(this, Logs.class);
-			startActivity(i);	
-		break;
+		//case(R.id.log_label):
+		//	i = new Intent(this, Logs.class);
+		//	startActivity(i);	
+		//break;
 		case(R.id.exit_label):
 	    	Thread t = new Thread(){
     		public void run(){
@@ -102,13 +105,38 @@ public class Menu extends Activity implements OnClickListener{
     		
     	
     	};
-    	t.start();
+    	
+    	//crearDialogoConfirmacion().show();
+    	
+    	/*if(sortir)*/	t.start();
 
 		break;
 		}
 		
 	}
 
+	boolean sortir = false;
+	private Dialog crearDialogoConfirmacion()
+	{
+	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	 
+	    builder.setTitle("Logout");
+	    builder.setMessage("Realment desitja fer logout?");
+	    builder.setPositiveButton("Sortir", new DialogInterface.OnClickListener() {
+	    	public void onClick(DialogInterface dialog, int which) {
+	    		sortir = true;
+	    	}
+	    	});
+	    
+	    builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+	    	public void onClick(DialogInterface dialog, int which) {
+	    		sortir = false;
+	    	}
+	    	});
+	 
+	    return builder.create();
+	}
+	
 	private void initService() {
 		
 		doBind();
