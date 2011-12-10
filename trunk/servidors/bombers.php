@@ -71,10 +71,15 @@
 						<input type="button" onclick="updatePosicions()" id="pos" style="width:150px" title="pos" value="pos" />												
 						<input type="button" onclick="deleteIncidencia(0)" id="de" style="width:150px" title="de" value="delete" />												
 
-						<input type="button" onclick="assignarInc(19999,777)" id="ass" style="width:150px" title="ass" value="assignar" />												
-						<input type="button" onclick="alliberarRecurs(19999)" id="all" style="width:150px" title="all" value="alliberar" />												
-						<input type="button" onclick="logoutRecurs(19999)" id="out" style="width:150px"  title="out" value="logout19999" />												
-						<input type="button" onclick="logInRecurs(19999,41.416,2.1345)" id="in" style="width:150px"  title="in" value="login19999" />												
+						<input type="button" onclick="assignarInc(10009,777)" id="ass" style="width:150px" title="ass" value="assignar10009" />												
+						<input type="button" onclick="alliberarRecurs(10009)" id="all" style="width:150px" title="all" value="alliberar10009" />												
+						<input type="button" onclick="logoutRecurs(10009)" id="out" style="width:150px"  title="out" value="logout10009" />												
+						<input type="button" onclick="logInRecurs(10009,41.416,2.1345)" id="in" style="width:150px"  title="in" value="login10009" />												
+					
+						<input type="button" onclick="assignarInc(10008,777)" id="ass" style="width:150px" title="ass" value="assignar10008" />												
+						<input type="button" onclick="alliberarRecurs(10008)" id="all" style="width:150px" title="all" value="alliberar10008" />												
+						<input type="button" onclick="logoutRecurs(10008)" id="out" style="width:150px"  title="out" value="logout10008" />												
+						<input type="button" onclick="logInRecurs(10008,41.416,2.1345)" id="in" style="width:150px"  title="in" value="login10008" />							
 					
 						<input type="button" onclick="enviarAssignacio('?id=7&id_ass=10002,10004,10005')" id="in" style="width:150px"  title="in" value="enviarAssignacio()" />												
 
