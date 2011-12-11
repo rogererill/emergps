@@ -14,6 +14,7 @@ var dist_actual;
 var pos = 0;
 var rutes = new Array();
 var id_incidencia_actual = 0;
+var bol = 1;
 
 
 
@@ -42,6 +43,11 @@ function updateEstat() {
                   }
                   // Request successful, read the response
                   var resp = req.responseText;    
+                  bol++;
+                  var text = "";
+                  text+=resp;
+                  text+=bol;
+                  document.getElementById('info').innerHTML = text;
                   resp = resp.split("#"); //separem en noves incidencies,les q hagin finalitzat, logins i logouts
                   
                   
@@ -374,7 +380,7 @@ function logInRecurs(id,lat,ln) {
         
         var id2 = id+"";
         id2 = id2.split("");
-        
+        alert("let's login " + id2);
         if(id2[0] == 1) {
                 var image = 'img/policia.png';
         }
@@ -634,6 +640,7 @@ function alliberarRecurs(id_recurs) {
 }
 
 function deleteIncidencia(id_inc) {
+		alert("acabem incidencia 1");
         for (var i = 0; i < markers.length; i++) {
                 var id = markers[i].getTitle();
                 id = id.split("#");
@@ -643,18 +650,20 @@ function deleteIncidencia(id_inc) {
                         markers.splice(i,1);
                 }
         }
+        alert("acabem incidencia 2");
         for (var k = 0; k < links.length; k++) {
                 if (links[k].id_inc == id_inc) {
                         links.splice(k,1);
                         updateLinks(-1,"");
                 }               
         }       
-        
+        alert("acabem incidencia 3");
         for (var j = 0; j < recursos.length; j++) {
                 if (obteIdInc(recursos[j].getTitle()) == id_inc) {
                         alliberarRecurs(j);
                 }
         }
+        alert("acabem incidencia 4");
 }
 
 function logoutRecurs(id_recurs) {

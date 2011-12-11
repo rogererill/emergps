@@ -215,6 +215,10 @@ function maxDistancia() {
 	return index;
 }
 
+function borraCamins() {
+	for (var j = 0; j < rutes.length; j++) rutes[j].cami.setMap(null);
+}
+
 function distRecursos(id_inc,pos_incidencia) {
 	var cont = 0;
 	var borrar = true;
@@ -387,7 +391,7 @@ function logInRecurs(id,lat,ln) {
 	
 	var id2 = id+"";
 	id2 = id2.split("");
-	
+	alert("let's login "+ id2);
 	if(id2[0] == 1) {
 		var image = 'img/policia.png';
 	}
@@ -434,24 +438,6 @@ function randomIncidencies() {
   	}
 
 	document.getElementById("llista_inc").innerHTML = links;
-}
-
-function randomRecursos() {
-	/*var location = new google.maps.LatLng(41.393062, 2.163788);
-	placeRecurs(location);
-	var location = new google.maps.LatLng(41.38498755231907, 2.1758079528808594);
-	placeRecurs(location);
-	var location = new google.maps.LatLng(41.394011, 2.112958);
-	placeRecurs(location);
-	var location = new google.maps.LatLng(41.38495535360129, 2.1345019340515137);
-	placeRecurs(location);*/
-	var location = new google.maps.LatLng(41.38597765510752, 2.1336543560028076);
-	placeRecurs(location);
-		
-	/*for (var i = 0; i < 10; i++) {
-		var location = new google.maps.LatLng(41.387917+(i/32)+Math.random()/3, 1.5-(i/64)+Math.random()/3);
-		placeRecurs(location);
-	}*/
 }
 
 function dibuixaCami(start,end) {
