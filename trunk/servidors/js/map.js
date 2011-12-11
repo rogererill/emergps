@@ -251,9 +251,15 @@ function maxDistancia() {
 
 function distRecursos(id_inc,pos_incidencia) {
 	var cont = 0;
+	var borrar = true;
 	for (var i = 0; i < recursos.length; i++) {
 		//alert("el recurs amb id= " + recursos[i].getTitle() + ", te incidencia " + obteIdInc(recursos[i].getTitle()));
 		if (obteIdInc(recursos[i].getTitle()) == -1) {
+			if (borrar == true) {
+				rutes.splice(0,rutes.length);
+				distancies.splice(0,distancies.length);
+				borrar = false;
+			}
 			//alert("el recurs "+recursos[i].getTitle()+"sera candidat a assignarse a nova incidencia");
 			calculateDistance(obteId(recursos[i].getTitle()),recursos[i].getPosition(),pos_incidencia);	
 			cont++;
@@ -272,8 +278,8 @@ function assignarIncidencies(id_inc) {
 		else text += rutes[i].recurs+"";
 	}
 	alert(text);
-	rutes.splice(0,rutes.length);
-	distancies.splice(0,distancies.length);
+	//rutes.splice(0,rutes.length);
+	//distancies.splice(0,distancies.length);
 	//alert("despres de fer splice, el vector de rutes queda am long= "+rutes.length);
 	//alert("la info que ussarem per asignar sera: " + text);
 	enviarAssignacio(text);	
@@ -304,6 +310,7 @@ function enviarAssignacio(atributs) {
 		  }
 		  // Request successful, read the response
 		  var resp = req.responseText;	  
+		  showRoute();
 		  alert(resp);  
 		}
 		alert("just abans de cridar asign_uni_web, url = " + url);
