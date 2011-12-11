@@ -113,7 +113,7 @@ function updateEstat() {
 		   */
 		  
 		  // format de la incidencia: id,lat,lon,descripcio
-		  for (var i = 0; i < inc_noves.length; i+=999999) {
+		  for (var i = 0; i < inc_noves.length; i+=4) {
 		  	//var i = 0;
 		  	var pos = new google.maps.LatLng(inc_noves[i+2],inc_noves[i+1]);
 		  	placeRandomMarker(pos,inc_noves[i],inc_noves[i+3]);
@@ -269,7 +269,7 @@ function assignarIncidencies(id_inc) {
 	for (var i = 0; i < rutes.length; i++) {
 		assignarInc(rutes[i].recurs,id_inc);
 		if(i < rutes.length-1) text += rutes[i].recurs+"z";
-		else text += rutes[i].recurs;
+		else text += rutes[i].recurs+"";
 	}
 	alert(text);
 	rutes.splice(0,rutes.length);
@@ -284,7 +284,7 @@ function enviarAssignacio(atributs) {
 		var url_base = "http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web";
 		//atributs = "?id=1&id_ass=10002";
 		var url = url_base+atributs;
-		var url = url_base + "?id=2&id_ass=10002z10004z10005";
+		//var url = url_base + "?id=2&id_ass=10002&";
 		var req = createRequest(); // defined above
 		// Create the callback:
 		req.onreadystatechange = function() {
@@ -592,7 +592,7 @@ function placeRandomMarker(location,id,info) {
 
 function enviaNovaIncidencia(lat,ln,descr) {
 	var url_base = "http://roger90.no-ip.org/HelloWorld/resources/emergps/new_inc_web";
-	var atributs = "?user=-1&posy="+lat+"&posx="+ln+"&com="+descr;
+	var atributs = "?posx="+ln+"&posy="+lat+"&comentari="+descr;
 	
 		var url = url_base+atributs;
 		alert(url);
