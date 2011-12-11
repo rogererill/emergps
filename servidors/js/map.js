@@ -255,13 +255,13 @@ function distRecursos(id_inc,pos_incidencia) {
 	for (var i = 0; i < recursos.length; i++) {
 		//alert("el recurs amb id= " + recursos[i].getTitle() + ", te incidencia " + obteIdInc(recursos[i].getTitle()));
 		if (obteIdInc(recursos[i].getTitle()) == -1) {
+			alert("nem a borrar els camins pintats");
 			if (borrar == true) {
-				rutes.splice(0,rutes.length);
-				distancies.splice(0,distancies.length);
+				for (var j = 0; j < rutes.length; j++) rutes[j].cami.setMap(null);
 				borrar = false;
 			}
 			//alert("el recurs "+recursos[i].getTitle()+"sera candidat a assignarse a nova incidencia");
-			calculateDistance(obteId(recursos[i].getTitle()),recursos[i].getPosition(),pos_incidencia);	
+			calculateDistance(obteId(recursos[i].getTitle()),recursos[i].getPosition(),id_inc,pos_incidencia);	
 			cont++;
 		}
 	}
@@ -282,7 +282,7 @@ function assignarIncidencies(id_inc) {
 	//distancies.splice(0,distancies.length);
 	//alert("despres de fer splice, el vector de rutes queda am long= "+rutes.length);
 	//alert("la info que ussarem per asignar sera: " + text);
-	enviarAssignacio(text);	
+	enviarAssignacio(id_inc,text);	
 }
 
 function enviarAssigFormulari() {
@@ -290,10 +290,10 @@ function enviarAssigFormulari() {
 	var id_recurs = document.formGeocode.id_recurs.value;
 	var atributs = "?id="+id_inc+"&id_ass="+id_recurs;
 	assignarInc(id_recurs,id_inc);
-	enviarAssignacio(atributs);
+	enviarAssignacio(id_inc,atributs);
 }
 
-function enviarAssignacio(atributs) {
+function enviarAssignacio(id_inc,atributs) {
 	
 		var url_base = "http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web";
 		//atributs = "?id=1&id_ass=10002";
@@ -309,8 +309,9 @@ function enviarAssignacio(atributs) {
 			return;
 		  }
 		  // Request successful, read the response
-		  var resp = req.responseText;	  
-		  showRoute();
+		  var resp = req.responseText;	 
+		  atributs = atributs.split("&"); 
+		  showRouteInc(id_inc);
 		  alert(resp);  
 		}
 		alert("just abans de cridar asign_uni_web, url = " + url);
@@ -332,7 +333,7 @@ function assignarInc(id_recurs,id_inc) {
 	else alert("error al assignar incidencia a recurs "+ id_recurs);
 }
 
-function calculateDistance(id_recurs,location1, location2) {
+function calculateDistance(id_recurs,location1,id_inc,location2) {
 	//alert("calcularem distancia");
 	directionsService = new google.maps.DirectionsService();
 	
@@ -360,7 +361,8 @@ function calculateDistance(id_recurs,location1, location2) {
 		  		directionsDisplay.setDirections(response);
 		  		var ruta = {
 			  			cami: directionsDisplay,
-			  			recurs: id_recurs
+			  			recurs: id_recurs,
+			  			id_inc: id_inc
 			  	};
 			  	if (pos == -2) {
 			  		alert("-2");
@@ -406,6 +408,12 @@ function min3Dists(distancia) {
 
 function showRoute() {
 	for (var i = 0; i < rutes.length; i++) rutes[i].cami.setMap(map);
+}
+
+function showRouteInc(id_inc) {
+	for (var i = 0; i < rutes.length; i++) {
+		if (rutes[i].id_inc == id_inc) rutes[i].cami.setMap(map);
+	}
 }
 
 function distancesLong() {
