@@ -52,6 +52,9 @@
 					</div>
 						<input type="button" onclick="enviarAssigFormulari()" id="inputButtonGeocode" style="width:150px" title="Click per assignar" value="Click per assignar" />																					
 					</form>
+					</div>
+						<input type="button" onclick="borraCamins()" id="inputButtonGeocode" style="width:150px" title="Esborrar camins" value="Esborrar camins" />																					
+					</form>
 				</fieldset>
 				</div>
 			</div>
