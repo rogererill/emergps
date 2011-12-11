@@ -6,16 +6,8 @@
 		$user = $_POST['user'];
 		$pass = $_POST['pass'];
 		
-		$sql = "select * from centrals where nom='$user' and pass='$pass'";
-		$r = mysql_query($sql);
-		
-		if(mysql_num_rows($r) > 0) {
-			$fila = mysql_fetch_array($r);
-			$url = $fila['url'];
-			header ("Location:".$url);
-		}
+		if ($user == 'bombers' && $pass == 'bombers') header ("Location:".$url);
 	}
-	
 ?>
 
 
