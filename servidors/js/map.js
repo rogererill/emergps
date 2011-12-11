@@ -283,6 +283,7 @@ function enviarAssigFormulari() {
 	var id_inc = document.formGeocode.id_inc.value;
 	var id_recurs = document.formGeocode.id_recurs.value;
 	var atributs = "?id="+id_inc+"&id_ass="+id_recurs;
+	assignarInc(id_recurs,id_inc);
 	enviarAssignacio(atributs);
 }
 
@@ -538,7 +539,7 @@ function crearIncidencia() {
 	var lng = document.formCrearInc.lng.value;
 	var location = new google.maps.LatLng(lat,lng);
 	var tIni = horaActual();
-	var info = creaInfo(title,"-",tIni);
+	var info = creaInfo(title,lat+","+lng,tIni);
 	
 	updateLinks(title);
 	index++;
@@ -637,7 +638,7 @@ function enviaNovaIncidencia(lat,ln,descr) {
 }
 
 function placeMarker(location) {
-  var image = 'img/incidencia.png';
+  var image = 'wee/incidencia.png';
   var marker = new google.maps.Marker({
       position: location, 
       map: map,
@@ -659,9 +660,10 @@ function placeMarker(location) {
 }
 
 function buscaRecursId(id_recurs) {
-	alert("per alguna rao, nem a donar de baixa el recurs nombero: "+id_recurs);
+	
 	for (var i = 0; i < recursos.length; i++) {
 		var id_rec = obteId(recursos[i].getTitle());
+		alert("busquem id de recurs i trobem "+id_rec+", que el comparem amb "+id_recurs);
 		//alert("id trobat= " + id_rec+ " i id passat es= " + id_recurs);
 		if (id_rec == id_recurs) return i;
 	}
@@ -693,10 +695,11 @@ function deleteIncidencia(id_inc) {
 		var id = markers[i].getTitle();
 		id = id.split("#");
 		id = id[1];
+		alert("al delete incidencia, comparem " + id + " amb " + id_inc);
 		if (id == id_inc) {
 			markers[i].setMap(null);
 			markers.splice(i,1);
-			alert("hem eliminat incidencia correctament");
+			alert("hem eliminat incidencia correctament am posicio "+i);
 		}
 	}
 
