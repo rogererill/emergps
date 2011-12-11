@@ -254,6 +254,7 @@ function distRecursos(id_inc,pos_incidencia) {
 	var borrar = true;
 	for (var i = 0; i < recursos.length; i++) {
 		//alert("el recurs amb id= " + recursos[i].getTitle() + ", te incidencia " + obteIdInc(recursos[i].getTitle()));
+		alert("el recurs am index " + i + " te incidencia = " + obteIdInc(recursos[i].getTitle()));
 		if (obteIdInc(recursos[i].getTitle()) == -1) {
 			alert("nem a borrar els camins pintats");
 			if (borrar == true) {
@@ -273,7 +274,7 @@ function distRecursos(id_inc,pos_incidencia) {
 function assignarIncidencies(id_inc) {
 	var text = "?id="+id_inc+"&id_ass=";
 	for (var i = 0; i < rutes.length; i++) {
-		assignarInc(rutes[i].recurs,id_inc);
+		if(rutes[i].id_inc == id_inc) assignarInc(rutes[i].recurs,id_inc);
 		if(i < rutes.length-1) text += rutes[i].recurs+"z";
 		else text += rutes[i].recurs+"";
 	}
@@ -638,6 +639,11 @@ function placeRandomMarker(location,id,info) {
     var info = marker.title;//.split("#");
     //info = info[0];
     document.getElementById('info').innerHTML = info;
+    
+    info = info.split("#");
+    info = info[1];
+    alert("li as donat al marker i la id incidencia es " + info);
+    showRouteInc(info);
   });
 
   bounds.extend(location);
@@ -740,12 +746,17 @@ function deleteIncidencia(id_inc) {
 	}
 	alert("dosssssssssssssssssssssssss");
 	for (var k = 0; k < links.length; k++) {
+		
 		if (links[k].id_inc == id_inc) {
 			alert("eliminarem tambe el seu link " + links[k].html);
 			links.splice(k,1);
 			updateLinks(-1,"");
 		}		
 	}	
+	
+	for (var t = 0; t < rutes.length; t++) {
+		if (rutes[t].id_inc == id_inc) rutes[t].cami.setMap(null);
+	}
 	
 	for (var j = 0; j < recursos.length; j++) {
 		if (obteIdInc(recursos[j].getTitle()) == id_inc) {
