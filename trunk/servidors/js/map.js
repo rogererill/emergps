@@ -522,7 +522,6 @@ function creaInfo(titol,direccio,horaIn) {
 }
 
 function updateLinks(id_inc,title) {
-	alert("la id dels collons es " + id_inc);
 	if (id_inc != -1) {
 		var nou_link = {
 			html:"<a href='#'><div class='element_llista' id="+id_inc+" onclick='eventLlista_inc(this.id)'> "+title+"</div></a>",
