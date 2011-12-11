@@ -640,7 +640,6 @@ function alliberarRecurs(id_recurs) {
 }
 
 function deleteIncidencia(id_inc) {
-		alert("acabem incidencia 1");
         for (var i = 0; i < markers.length; i++) {
                 var id = markers[i].getTitle();
                 id = id.split("#");
@@ -650,20 +649,18 @@ function deleteIncidencia(id_inc) {
                         markers.splice(i,1);
                 }
         }
-        alert("acabem incidencia 2");
+        
         for (var k = 0; k < links.length; k++) {
                 if (links[k].id_inc == id_inc) {
                         links.splice(k,1);
                         updateLinks(-1,"");
                 }               
         }       
-        alert("acabem incidencia 3");
         for (var j = 0; j < recursos.length; j++) {
                 if (obteIdInc(recursos[j].getTitle()) == id_inc) {
                         alliberarRecurs(j);
                 }
         }
-        alert("acabem incidencia 4");
 }
 
 function logoutRecurs(id_recurs) {
