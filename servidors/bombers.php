@@ -62,6 +62,18 @@
 						<input type="text" id="inputTextAddress" title="Address to Geocode" />
 					</div>
 						<input type="button" onclick="codeAddress()" id="inputButtonGeocode" style="width:150px" title="Click to Geocode" value="Click to Geocode" />									
+						
+						<div>
+						<label for="id_inc"> incidencia </label>
+						<input type="text" name="id_inc" id="id_inc">
+					</div>
+					
+					<div>
+						<label for="id_recurs"> recurs </label> 
+						<input type="text" id="id_recurs" title="id_recurs" />
+					</div>
+						<input type="button" onclick="enviarAssigFormulari()" id="inputButtonGeocode" style="width:150px" title="Click per assignar" value="Click per assignar" />									
+
 						<input type="button" onclick="showRoute()" id="moure" style="width:150px" title="moure" value="distancia" />												
 						<input type="button" onclick="distRecursos()" id="min" style="width:150px" title="min" value="min" />												
 						<input type="button" onclick="showRecursos()" id="pos" style="width:150px" title="pos" value="showRecursos" />												
