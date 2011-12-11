@@ -48,7 +48,7 @@ function updateEstat() {
 		  }
 		  // Request successful, read the response
 		  var resp = req.responseText;	  
-		  if (resp != "###") alert(resp);
+		  //if (resp != "###") alert(resp);
 		  resp = resp.split("#"); //separem en noves incidencies,les q hagin finalitzat, logins i logouts
 		  
 		  
@@ -88,8 +88,8 @@ function updateEstat() {
 		   * 	3) notificar al sv central la baixa de la incidencia
 		   */
 		  
-		  //format incidencies finalitzades: id_inc
-		  for (var i = 0; i < inc_fin.length; i++) {
+		  //format incidencies finalitzades: id_inc,posx,posy
+		  for (var i = 0; i < inc_fin.length; i+=3) {
 		  	deleteIncidencia(inc_fin[i]); //eliminada i recursos alliberats
 		  	//falta avisar servidor central
 		  }
@@ -124,7 +124,7 @@ function updateEstat() {
 		}
 		req.open("GET", url, true);
 		req.send();
-		//var s = setTimeout("updateEstat()",5000);
+		var s = setTimeout("updateEstat()",5000);
 }
 
 function updatePosicions() {
@@ -230,7 +230,7 @@ function initialize() {
   	document.getElementById("info").innerHTML = text;
   	//enquesta();
   	var t = setTimeout("updatePosicions()",2000);
-  	//var s = setTimeout("updateEstat()",5000);
+  	var s = setTimeout("updateEstat()",5000);
 }
 
 function maxDistancia() {
@@ -275,7 +275,7 @@ function assignarIncidencies(id_inc) {
 	rutes.splice(0,rutes.length);
 	distancies.splice(0,distancies.length);
 	//alert("despres de fer splice, el vector de rutes queda am long= "+rutes.length);
-	//alert("la info que usarem per asignar sera: " + text);
+	//alert("la info que ussarem per asignar sera: " + text);
 	enviarAssignacio(text);	
 }
 
@@ -399,7 +399,7 @@ function distancesLong() {
 
 function placeRecurs(location) {
 	
-  var image = 'cotxe_bombers.png';
+  var image = 'img/cotxe_bombers.png';
   
   var marker = new google.maps.Marker({
       position: location, 
@@ -425,7 +425,20 @@ function placeRecurs(location) {
 function logInRecurs(id,lat,ln) {	
 	var location = new google.maps.LatLng(lat,ln);
 	
-	var image = 'cotxe_bombers.png';
+	var id2 = id+"";
+	id2 = id2.split("");
+	
+	if(id2[0] == 1) {
+		var image = 'img/policia.png';
+	}
+	else if(id2[0] == 2) {
+		var image = 'img/bomber.png';	
+	}
+	else if(id2[0] == 3) {
+		var image = 'img/ambulancia.png';
+	}
+	
+	
   
 	var marker = new google.maps.Marker({
 		position: location, 
@@ -563,7 +576,7 @@ function eventLlista_inc(index) {
 //el nom pot crear confusio, no es crear un marker a una posicio random, sino que es posa a la posicio
 //location i amb titol:info
 function placeRandomMarker(location,id,info) {
-  var image = 'fire.png';
+  var image = 'img/incidencia.png';
   var marker = new google.maps.Marker({
       position: location, 
       map: map,
@@ -617,7 +630,7 @@ function enviaNovaIncidencia(lat,ln,descr) {
 }
 
 function placeMarker(location) {
-  var image = 'fire.png';
+  var image = 'img/incidencia.png';
   var marker = new google.maps.Marker({
       position: location, 
       map: map,
@@ -639,8 +652,9 @@ function placeMarker(location) {
 }
 
 function buscaRecursId(id_recurs) {
+	alert("per alguna rao, nem a donar de baixa el recurs nombero: "+id_recurs);
 	for (var i = 0; i < recursos.length; i++) {
-		id_rec = obteId(recursos[i].getTitle());
+		var id_rec = obteId(recursos[i].getTitle());
 		//alert("id trobat= " + id_rec+ " i id passat es= " + id_recurs);
 		if (id_rec == id_recurs) return i;
 	}
@@ -651,12 +665,17 @@ function buscaRecursId(id_recurs) {
 
 //desasignar qualsevol el recurs duna incidencia
 function alliberarRecurs(id_recurs) {
-	var index;
-	index = buscaRecursId(id_recurs);
+	//var index;
+	alert("abans de buscarRecursID");
+	//index = buscaRecursId(id_recurs);
+	alert("despres de buscarRecursID, index = " + id_recurs);
+
 	//if (index =! -1) {
-		var title = recursos[index].getTitle().split("#");
+		var title = recursos[id_recurs].getTitle().split("#");
 		title = title[0]+"#-1";
-		recursos[index].setTitle(title);	
+		alert("per dsasignar usarem el text " + title);
+		recursos[id_recurs].setTitle(title);	
+		alert("i el resultat ha estat " + recursos[id_recurs].setTitle(title));
 	//}
 	//else alert("error al alliberar recurs "+ id_recurs);
 }

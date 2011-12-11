@@ -23,7 +23,6 @@
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;language=es"></script>
     <script type="text/javascript" src="js/map.js"></script>
     <script type="text/javascript" src="js/web-sv.js"></script>
-    <script type="text/javascript" src="js/abaaso-min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
 
