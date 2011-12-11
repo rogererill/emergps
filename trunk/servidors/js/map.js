@@ -549,9 +549,8 @@ function crearIncidencia() {
 function crearIncidenciaGeocode(location) {
 	var title = document.formGeocode.titolInc.value;
 	var tIni = horaActual();
-	var info = creaInfo(title,"-",tIni);
-	
-	placeRandomMarker(location,id_incidencia_actual+1,info);
+	var info = creaInfo(title,location.lat()+","+location.lng(),tIni);
+	alert("~~~~~~~~~");
 	updateLinks(title);
 	index++;
 	enviaNovaIncidencia(location.lat(),location.lng(),info);
@@ -606,7 +605,6 @@ function placeRandomMarker(location,id,info) {
 
   bounds.extend(location);
   markers.push(marker);
-  id_incidencia_actual = id;
   map.setCenter(location);
   alert("crearem nova incidencia amb lat="+location.lat()+" i ln= "+location.lng() + " i info= "+info);
 }
