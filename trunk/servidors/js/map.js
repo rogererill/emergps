@@ -687,12 +687,14 @@ function deleteIncidencia(id_inc) {
 		id = id.split("#");
 		id = id[1];
 		if (id == id_inc) {
-			alert("efectivament donarem de baixa la num " + id);
 			markers[i].setMap(null);
 			markers.splice(i,1);
 			alert("hem eliminat incidencia correctament");
 		}
 	}
+
+	//borrem links	
+	
 	for (var j = 0; j < recursos.length; j++) {
 		if (obteIdInc(recursos[j].getTitle()) == id_inc) {
 			alert("alliberarem el recurs " + recursos[j].getTitle());
