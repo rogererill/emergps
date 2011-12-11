@@ -25,16 +25,10 @@ function enquesta() {
 function mouRecursos() {
 	var posic = new Array();
 	posic = getPosicions();
-	alert(posic);
-	//for (var i = 0; i < recursos.length; i++) {
-		//mouRecurs(i);
-	//}
 }	
 
 /* s'encarrega de les noves incidencies, el logins i logouts dels recursos */
-function updateEstat() {
-		//alert("cridem updateStat");
-		
+function updateEstat() {		
 		var url = "http://roger90.no-ip.org/HelloWorld/resources/emergps/estat";
 		//var url = "http://mihizawi.redirectme.net/HelloWorld/resources/emergps/estat";
 		var req = createRequest(); // defined above
@@ -48,25 +42,20 @@ function updateEstat() {
 		  }
 		  // Request successful, read the response
 		  var resp = req.responseText;	  
-		  //if (resp != "###") alert(resp);
 		  resp = resp.split("#"); //separem en noves incidencies,les q hagin finalitzat, logins i logouts
 		  
 		  
 		  var inc_noves = resp[0].split("&");
 		  inc_noves.splice(0,1); //tenim incidencies  
-		  //alert("noves inc: " + inc_noves);
 		  
 		  var inc_fin = resp[1].split("&");
 		  inc_fin.splice(0,1); //tenim incidencies finalitzades
-		  //alert("incidencies finalitzades: "+ inc_fin);
 		  
 		  var login = resp[2].split("&");
 		  login.splice(0,1); //tenim logins
-		  //alert("logins: "+ login);
 		  
 		  var logout = resp[3].split("&");
 		  logout.splice(0,1); //tenim logouts
-		  //alert("logouts: "+ logout);
 		  
 		  
 		   /*Logouts - ara cal fer coses:
@@ -128,23 +117,20 @@ function updateEstat() {
 }
 
 function updatePosicions() {
-		//alert("cridem getPosicions");
 		var url = "http://roger90.no-ip.org/HelloWorld/resources/emergps/posicions";
-		//var url = "http://mihizawi.redirectme.net/HelloWorld/resources/emergps/posicions";
 		var req = createRequest(); // defined above
 		// Create the callback:
 		req.onreadystatechange = function() {
 		  if (req.readyState != 4) return; // Not there yet
 		  if (req.status != 200) {
 			// Handle request failure here...
-			//alert(req.status);
+			alert(req.status);
 			return;
 		  }
 		  // Request successful, read the response
 		  var resp = req.responseText;	  
 		  resp = resp.split("&");
 		  resp.splice(0,1); //ara ja tenim a resp, cada posicio: id,lat,lon,id,lat,lon... etc
-		  //alert(resp);
 		  
 		  for (var i = 0; i < resp.length; i+=3) {
 		  	for (var j = 0; j < recursos.length; j++) {
@@ -185,24 +171,6 @@ function mouRecurs(pos) {
 	document.getElementById("info").innerHTML = text;
 	var t = setTimeout("mouRecursos()",2000);
 }
-/*
-function alertMsg() {
-	
-	if (Math.random() > 0.5) {
-	var title = "fetaAmbTimer";
-	var tIni = horaActual();
-	var info = creaInfo(title,"-",tIni);
-	var location = new google.maps.LatLng(41.387917-Math.random(), 2.169919+Math.random()); 
-	
-	placeRandomMarker(location,info);
-	updateLinks(title);
-	index++;
-	
-	alert("Hello");
-	
-	}
-	var t=setTimeout("alertMsg()",3000);
-}*/
 
 function initialize() {
 	directionsDisplay = new google.maps.DirectionsRenderer();
@@ -244,8 +212,6 @@ function maxDistancia() {
 			index = i;
 		}
 	}
-	//alert("la maxima distancia es "+ index);
-	//distancies.splice(index,1);	
 	return index;
 }
 
@@ -253,21 +219,16 @@ function distRecursos(id_inc,pos_incidencia) {
 	var cont = 0;
 	var borrar = true;
 	for (var i = 0; i < recursos.length; i++) {
-		//alert("el recurs amb id= " + recursos[i].getTitle() + ", te incidencia " + obteIdInc(recursos[i].getTitle()));
-		alert("el recurs am index " + i + " te incidencia = " + obteIdInc(recursos[i].getTitle()));
 		if (obteIdInc(recursos[i].getTitle()) == -1) {
-			alert("nem a borrar els camins pintats");
 			if (borrar == true) {
 				for (var j = 0; j < rutes.length; j++) rutes[j].cami.setMap(null);
 				borrar = false;
 			}
-			//alert("el recurs "+recursos[i].getTitle()+"sera candidat a assignarse a nova incidencia");
 			calculateDistance(obteId(recursos[i].getTitle()),recursos[i].getPosition(),id_inc,pos_incidencia);	
 			cont++;
 		}
 	}
 	
-	//alert("ara assignarem incidencia");
 	if (cont > 0) t = setTimeout("assignarIncidencies("+id_inc+")",1000);
 }
 
@@ -278,11 +239,6 @@ function assignarIncidencies(id_inc) {
 		if(i < rutes.length-1) text += rutes[i].recurs+"z";
 		else text += rutes[i].recurs+"";
 	}
-	alert(text);
-	//rutes.splice(0,rutes.length);
-	//distancies.splice(0,distancies.length);
-	//alert("despres de fer splice, el vector de rutes queda am long= "+rutes.length);
-	//alert("la info que ussarem per asignar sera: " + text);
 	enviarAssignacio(id_inc,text);	
 }
 
@@ -315,7 +271,6 @@ function enviarAssignacio(id_inc,atributs) {
 		  showRouteInc(id_inc);
 		  alert(resp);  
 		}
-		alert("just abans de cridar asign_uni_web, url = " + url);
 		req.open("GET", url, true);
 		req.send();
 }
@@ -323,19 +278,17 @@ function enviarAssignacio(id_inc,atributs) {
 //assignar una incidencia a un recurs 
 function assignarInc(id_recurs,id_inc) {
 	var index;
-	alert("assignem "+id_recurs+" a incidencia " + id_inc);
 	index = buscaRecursId(id_recurs);
 	if(index != -1) {
 			var title = recursos[index].getTitle().split("#");
 			title = title[0]+"#"+id_inc+"";
 			recursos[index].setTitle(title);	
-			alert("s'ha assignat al recurs num " + id_recurs + " la incidencia num " + recursos[index].getTitle());		
+			alert("s'ha assignat el recurs num " + id_recurs + " a la incidencia num " + recursos[index].getTitle());		
 	}
 	else alert("error al assignar incidencia a recurs "+ id_recurs);
 }
 
 function calculateDistance(id_recurs,location1,id_inc,location2) {
-	//alert("calcularem distancia");
 	directionsService = new google.maps.DirectionsService();
 	
 	var request = {
@@ -350,9 +303,7 @@ function calculateDistance(id_recurs,location1,id_inc,location2) {
 	   	{   
 			var distance = response.routes[0].legs[0].distance;
 			var durada = response.routes[0].legs[0].duration;
-			//alert ("la durada es " + durada.value);
 	      	var pos = afegeixDistancia(durada.value);
-	      	alert("al calcular la distancia del recurs "+ id_recurs+" la posicio ha donat ");
 	      	if (pos != -1) {
 	      		directionsDisplay = new google.maps.DirectionsRenderer(
 				{
@@ -366,27 +317,16 @@ function calculateDistance(id_recurs,location1,id_inc,location2) {
 			  			id_inc: id_inc
 			  	};
 			  	if (pos == -2) {
-			  		alert("-2");
 			  		rutes.push(ruta);
-			  		//alert("ha tret -2");
 			  	}
 			  	else {
-			  		alert("un numero != -2,-1");
 			  		rutes[pos] = ruta;
-					//alert("ha tret guai");
 				}
 			}
-			else alert("-1");
-			//else alert("ha tret -1");
-	      //distance += "The aproximative driving time is: "+response.routes[0].legs[0].duration.text;
 	      document.getElementById("info").innerHTML = distance.value;	      
 	   } 
 	   else alert("Error al calcular distancia");
 	});
-}
-
-function showAssignacions() {
-	for (var i = 0; i < rutes.length; i++) alert(rutes[i].recurs);
 }
 
 function afegeixDistancia(distancia) {
@@ -415,10 +355,6 @@ function showRouteInc(id_inc) {
 	for (var i = 0; i < rutes.length; i++) {
 		if (rutes[i].id_inc == id_inc) rutes[i].cami.setMap(map);
 	}
-}
-
-function distancesLong() {
-	alert(distancies.length);
 }
 
 function placeRecurs(location) {
@@ -483,7 +419,6 @@ function logInRecurs(id,lat,ln) {
 		  
 	bounds.extend(location);
 	recursos.push(marker);
-	//alert("em fet login");
 }
 
 function randomIncidencies() {
@@ -642,14 +577,12 @@ function placeRandomMarker(location,id,info) {
     
     info = info.split("#");
     info = info[1];
-    alert("li as donat al marker i la id incidencia es " + info);
     showRouteInc(info);
   });
 
   bounds.extend(location);
   markers.push(marker);
   map.setCenter(location);
-  alert("crearem nova incidencia amb lat="+location.lat()+" i ln= "+location.lng() + " i info= "+info);
 }
 
 function enviaNovaIncidencia(lat,ln,descr) {
@@ -657,7 +590,6 @@ function enviaNovaIncidencia(lat,ln,descr) {
 	var atributs = "?posx="+ln+"&posy="+lat+"&comentari="+descr;
 	
 		var url = url_base+atributs;
-		alert(url);
 		var req = createRequest(); // defined above
 		// Create the callback:
 		req.onreadystatechange = function() {
@@ -705,8 +637,6 @@ function buscaRecursId(id_recurs) {
 	
 	for (var i = 0; i < recursos.length; i++) {
 		var id_rec = obteId(recursos[i].getTitle());
-		alert("busquem id de recurs i trobem "+id_rec+", que el comparem amb "+id_recurs);
-		//alert("id trobat= " + id_rec+ " i id passat es= " + id_recurs);
 		if (id_rec == id_recurs) return i;
 	}
 	return -1;
@@ -716,39 +646,24 @@ function buscaRecursId(id_recurs) {
 
 //desasignar qualsevol el recurs duna incidencia
 function alliberarRecurs(id_recurs) {
-	//var index;
-	alert("abans de buscarRecursID");
-	//index = buscaRecursId(id_recurs);
-	alert("despres de buscarRecursID, index = " + id_recurs);
-
-	//if (index =! -1) {
-		var title = recursos[id_recurs].getTitle().split("#");
-		title = title[0]+"#-1";
-		alert("per dsasignar usarem el text " + title);
-		recursos[id_recurs].setTitle(title);	
-		alert("i el resultat ha estat " + recursos[id_recurs].setTitle(title));
-	//}
-	//else alert("error al alliberar recurs "+ id_recurs);
+	var title = recursos[id_recurs].getTitle().split("#");
+	title = title[0]+"#-1";
+	recursos[id_recurs].setTitle(title);	
 }
 
 function deleteIncidencia(id_inc) {
-	alert("anem a donar de baixa la incidencia num " + id_inc);
 	for (var i = 0; i < markers.length; i++) {
 		var id = markers[i].getTitle();
 		id = id.split("#");
 		id = id[1];
-		alert("al delete incidencia, comparem " + id + " amb " + id_inc);
 		if (id == id_inc) {
 			markers[i].setMap(null);
 			markers.splice(i,1);
-			alert("hem eliminat incidencia correctament am posicio "+i);
 		}
 	}
-	alert("dosssssssssssssssssssssssss");
 	for (var k = 0; k < links.length; k++) {
 		
 		if (links[k].id_inc == id_inc) {
-			alert("eliminarem tambe el seu link " + links[k].html);
 			links.splice(k,1);
 			updateLinks(-1,"");
 		}		
@@ -760,23 +675,16 @@ function deleteIncidencia(id_inc) {
 	
 	for (var j = 0; j < recursos.length; j++) {
 		if (obteIdInc(recursos[j].getTitle()) == id_inc) {
-			alert("alliberarem el recurs " + recursos[j].getTitle());
 			alliberarRecurs(j);
 		}
 	}
 }
 
 function logoutRecurs(id_recurs) {
-	//alert("nem a fer logout de " + id_recurs);
 	var index;
 	index = buscaRecursId(id_recurs);
-	alert("al fer logout, buscaRecursID =" + index);
-	//if (index =! -1) {
 	recursos[index].setMap(null);
 	recursos.splice(index,1);
-		//alert("hem eliminat incidencia recurs correctament");		
-	//}
-	//else alert("error al logout recurs "+ id_recurs);
 }
 
 function createRequest() {
@@ -797,8 +705,3 @@ function createRequest() {
 	  }
 	  return result;
 }
-/*
-?id=3&id_ass=10009
-just abans de cridar asign_uni_web, url = http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web?id=3&id_ass=10009
-just abans de cridar asign_uni_web, url = http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web?id=2&id_ass=10002z10004z10005
-just abans de cridar asign_uni_web, url = http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web?id=2&id_ass=10002z10004z10005*/
