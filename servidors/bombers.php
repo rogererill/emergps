@@ -81,7 +81,7 @@
 						<input type="button" onclick="logoutRecurs(10008)" id="out" style="width:150px"  title="out" value="logout10008" />												
 						<input type="button" onclick="logInRecurs(10008,41.416,2.1345)" id="in" style="width:150px"  title="in" value="login10008" />							
 					
-						<input type="button" onclick="enviarAssignacio('?id=7&id_ass=10002,10004,10005')" id="in" style="width:150px"  title="in" value="enviarAssignacio()" />												
+						<input type="button" onclick="enviarAssignacio('?id=2&id_ass=10002z10004z10005')" id="in" style="width:150px"  title="in" value="enviarAssignacio()" />												
 
 					</form>
 				</fieldset>
