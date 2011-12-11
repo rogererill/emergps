@@ -117,7 +117,7 @@ function updateEstat() {
 		  	//var i = 0;
 		  	var pos = new google.maps.LatLng(inc_noves[i+2],inc_noves[i+1]);
 		  	placeRandomMarker(pos,inc_noves[i],inc_noves[i+3]);
-		  	updateLinks(inc_noves[i+3]);
+		  	updateLinks(inc_noves[i],inc_noves[i+3]);
 		  	//index++;
 		  	distRecursos(inc_noves[i],pos);
 		  }  		  
@@ -522,17 +522,18 @@ function creaInfo(titol,direccio,horaIn) {
 }
 
 function updateLinks(id_inc,title) {
+	alert("la id dels collons es " + id_inc);
 	if (id_inc != -1) {
 		var nou_link = {
-			html:"<a href='#'><div class='element_llista' id="+index+" onclick='eventLlista_inc(this.id)'> "+title+"</div></a>",
+			html:"<a href='#'><div class='element_llista' id="+id_inc+" onclick='eventLlista_inc(this.id)'> "+title+"</div></a>",
 			id_inc: id_inc
 		};
 		links.push(nou_link);
-		index++;
+		//index++;
 	}
-	else {
+	/*else {
 		index--;
-	}
+	}*/
 		var links_total = "";
 		for (var i = 0; i < links.length; i++) {
 			links_total += links[i].html;
@@ -587,10 +588,19 @@ function vista_general() {
 	map.fitBounds(bounds);
 }
 
-function eventLlista_inc(index) {
-	document.getElementById('info').innerHTML = markers[index].title;
-	map.setCenter(markers[index].position);
-	map.setZoom(15);
+function eventLlista_inc(id_inc) {
+	
+	for (var i = 0; i < markers.length; i++) {
+		var id = markers[i].getTitle();
+		id = id.split("#");
+		id = id[1];
+		if (id == id_inc) {
+			document.getElementById('info').innerHTML = markers[i].title;
+			map.setCenter(markers[i].position);
+			map.setZoom(15);
+			i = 9999;
+		}
+	}
 }
 
 //el nom pot crear confusio, no es crear un marker a una posicio random, sino que es posa a la posicio
