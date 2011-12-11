@@ -1,19 +1,3 @@
-<?php
-	include("inc/util.php");
-	//connect_DB();
-	
-	if ($_POST['crear']) {
-		$name = $_POST['titol'];
-		$lat = $_POST['lang'];
-		$lng = $_POST['lng'];
-		$sql = "insert into incidencia(name,lat,lng) values ('$name','$lat','$lng')";
-		
-		$r = mysql_query($sql);
-	}
-	
-?>
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	
@@ -22,7 +6,6 @@
     <title>EmerGPS</title>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;language=es"></script>
     <script type="text/javascript" src="js/map.js"></script>
-    <script type="text/javascript" src="js/web-sv.js"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
 

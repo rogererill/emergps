@@ -778,6 +778,25 @@ function logoutRecurs(id_recurs) {
 	//}
 	//else alert("error al logout recurs "+ id_recurs);
 }
+
+function createRequest() {
+	  var result = null;
+	  if (window.XMLHttpRequest) {
+		// FireFox, Safari, etc.
+		result = new XMLHttpRequest();
+		if (typeof result.overrideMimeType != 'undefined') {
+		  result.overrideMimeType('text/xml'); // Or anything else
+		}
+	  }
+	  else if (window.ActiveXObject) {
+		// MSIE
+		result = new ActiveXObject("Microsoft.XMLHTTP");
+	  } 
+	  else {
+		// No known mechanism -- consider aborting the application
+	  }
+	  return result;
+}
 /*
 ?id=3&id_ass=10009
 just abans de cridar asign_uni_web, url = http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web?id=3&id_ass=10009

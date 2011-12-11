@@ -1,6 +1,6 @@
 var map;
 var markers = new Array();
-var links = ""; 
+var links = new Array(); 
 var index = 0;
 var bounds = new google.maps.LatLngBounds();
 var geocoder = new google.maps.Geocoder();
@@ -48,7 +48,7 @@ function updateEstat() {
                   }
                   // Request successful, read the response
                   var resp = req.responseText;    
-                  alert(resp);
+                  //if (resp != "###") alert(resp);
                   resp = resp.split("#"); //separem en noves incidencies,les q hagin finalitzat, logins i logouts
                   
                   
@@ -88,8 +88,8 @@ function updateEstat() {
                    *    3) notificar al sv central la baixa de la incidencia
                    */
                   
-                  //format incidencies finalitzades: id_inc
-                  for (var i = 0; i < inc_fin.length; i++) {
+                  //format incidencies finalitzades: id_inc,posx,posy
+                  for (var i = 0; i < inc_fin.length; i+=3) {
                         deleteIncidencia(inc_fin[i]); //eliminada i recursos alliberats
                         //falta avisar servidor central
                   }
@@ -117,14 +117,14 @@ function updateEstat() {
                         //var i = 0;
                         var pos = new google.maps.LatLng(inc_noves[i+2],inc_noves[i+1]);
                         placeRandomMarker(pos,inc_noves[i],inc_noves[i+3]);
-                        updateLinks(inc_noves[i+3]);
-                        index++;
+                        updateLinks(inc_noves[i],inc_noves[i+3]);
+                        //index++;
                         distRecursos(inc_noves[i],pos);
                   }               
                 }
                 req.open("GET", url, true);
                 req.send();
-                //var s = setTimeout("updateEstat()",5000);
+                var s = setTimeout("updateEstat()",5000);
 }
 
 function updatePosicions() {
@@ -230,7 +230,7 @@ function initialize() {
         document.getElementById("info").innerHTML = text;
         //enquesta();
         var t = setTimeout("updatePosicions()",2000);
-        //var s = setTimeout("updateEstat()",5000);
+        var s = setTimeout("updateEstat()",5000);
 }
 
 function maxDistancia() {
@@ -250,39 +250,49 @@ function maxDistancia() {
 }
 
 function distRecursos(id_inc,pos_incidencia) {
+        var cont = 0;
         for (var i = 0; i < recursos.length; i++) {
                 //alert("el recurs amb id= " + recursos[i].getTitle() + ", te incidencia " + obteIdInc(recursos[i].getTitle()));
                 if (obteIdInc(recursos[i].getTitle()) == -1) {
                         //alert("el recurs "+recursos[i].getTitle()+"sera candidat a assignarse a nova incidencia");
                         calculateDistance(obteId(recursos[i].getTitle()),recursos[i].getPosition(),pos_incidencia);     
+                        cont++;
                 }
         }
         
         //alert("ara assignarem incidencia");
-        t = setTimeout("assignarIncidencies("+id_inc+")",1000);
+        if (cont > 0) t = setTimeout("assignarIncidencies("+id_inc+")",1000);
 }
 
 function assignarIncidencies(id_inc) {
         var text = "?id="+id_inc+"&id_ass=";
         for (var i = 0; i < rutes.length; i++) {
                 assignarInc(rutes[i].recurs,id_inc);
-                if(i < rutes.length-1) text += rutes[i].recurs+",";
-                else text += rutes[i].recurs;
+                if(i < rutes.length-1) text += rutes[i].recurs+"z";
+                else text += rutes[i].recurs+"";
         }
         alert(text);
         rutes.splice(0,rutes.length);
         distancies.splice(0,distancies.length);
         //alert("despres de fer splice, el vector de rutes queda am long= "+rutes.length);
-        alert("la info que usarem per asignar sera: " + text);
+        //alert("la info que ussarem per asignar sera: " + text);
         enviarAssignacio(text); 
 }
 
+function enviarAssigFormulari() {
+        var id_inc = document.formGeocode.id_inc.value;
+        var id_recurs = document.formGeocode.id_recurs.value;
+        var atributs = "?id="+id_inc+"&id_ass="+id_recurs;
+        assignarInc(id_recurs,id_inc);
+        enviarAssignacio(atributs);
+}
+
 function enviarAssignacio(atributs) {
-        alert("entrem a enviar assignacio del servei den roger, atributs= "+atributs);
+        
                 var url_base = "http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web";
                 //atributs = "?id=1&id_ass=10002";
                 var url = url_base+atributs;
-                
+                //var url = url_base + "?id=2&id_ass=10002&";
                 var req = createRequest(); // defined above
                 // Create the callback:
                 req.onreadystatechange = function() {
@@ -296,6 +306,7 @@ function enviarAssignacio(atributs) {
                   var resp = req.responseText;    
                   alert(resp);  
                 }
+                alert("just abans de cridar asign_uni_web, url = " + url);
                 req.open("GET", url, true);
                 req.send();
 }
@@ -396,7 +407,7 @@ function distancesLong() {
 
 function placeRecurs(location) {
         
-  var image = 'cotxe_bombers.png';
+  var image = 'img/cotxe_bombers.png';
   
   var marker = new google.maps.Marker({
       position: location, 
@@ -422,7 +433,20 @@ function placeRecurs(location) {
 function logInRecurs(id,lat,ln) {       
         var location = new google.maps.LatLng(lat,ln);
         
-        var image = 'cotxe_bombers.png';
+        var id2 = id+"";
+        id2 = id2.split("");
+        
+        if(id2[0] == 1) {
+                var image = 'img/policia.png';
+        }
+        else if(id2[0] == 2) {
+                var image = 'img/bomber.png';   
+        }
+        else if(id2[0] == 3) {
+                var image = 'img/ambulancia.png';
+        }
+        
+        
   
         var marker = new google.maps.Marker({
                 position: location, 
@@ -497,9 +521,24 @@ function creaInfo(titol,direccio,horaIn) {
         return "Nom incidencia: "+titol+" <br> Direccio: " + direccio + " <br> Hora inici: " + horaIn + " </div></a>";
 }
 
-function updateLinks(title) {
-                links += "<a href='#'><div class='element_llista' id="+index+" onclick='eventLlista_inc(this.id)'> "+title+"</div></a>";
-                document.getElementById("llista_inc").innerHTML = links;
+function updateLinks(id_inc,title) {
+        alert("la id dels collons es " + id_inc);
+        if (id_inc != -1) {
+                var nou_link = {
+                        html:"<a href='#'><div class='element_llista' id="+id_inc+" onclick='eventLlista_inc(this.id)'> "+title+"</div></a>",
+                        id_inc: id_inc
+                };
+                links.push(nou_link);
+                //index++;
+        }
+        /*else {
+                index--;
+        }*/
+                var links_total = "";
+                for (var i = 0; i < links.length; i++) {
+                        links_total += links[i].html;
+                }
+                document.getElementById("llista_inc").innerHTML = links_total;
 }
 
 function horaActual() {
@@ -515,22 +554,20 @@ function crearIncidencia() {
         var lng = document.formCrearInc.lng.value;
         var location = new google.maps.LatLng(lat,lng);
         var tIni = horaActual();
-        var info = creaInfo(title,"-",tIni);
+        var info = creaInfo(title,lat+","+lng,tIni);
         
-        updateLinks(title);
-        index++;
-        enviaNovaIncidencia(location.lat(),location.lng(),info);
+        //updateLinks(title);
+        //index++;
+        enviaNovaIncidencia(location.lat(),location.lng(),title);
 }
 
 function crearIncidenciaGeocode(location) {
         var title = document.formGeocode.titolInc.value;
         var tIni = horaActual();
-        var info = creaInfo(title,"-",tIni);
-        
-        placeRandomMarker(location,id_incidencia_actual+1,info);
-        updateLinks(title);
-        index++;
-        enviaNovaIncidencia(location.lat(),location.lng(),info);
+        var info = creaInfo(title,location.lat()+","+location.lng(),tIni);
+        //updateLinks(title);
+        //index++;
+        enviaNovaIncidencia(location.lat(),location.lng(),title);
 }
 
 function codeAddress() { 
@@ -551,16 +588,25 @@ function vista_general() {
         map.fitBounds(bounds);
 }
 
-function eventLlista_inc(index) {
-        document.getElementById('info').innerHTML = markers[index].title;
-        map.setCenter(markers[index].position);
-        map.setZoom(15);
+function eventLlista_inc(id_inc) {
+        
+        for (var i = 0; i < markers.length; i++) {
+                var id = markers[i].getTitle();
+                id = id.split("#");
+                id = id[1];
+                if (id == id_inc) {
+                        document.getElementById('info').innerHTML = markers[i].title;
+                        map.setCenter(markers[i].position);
+                        map.setZoom(15);
+                        i = 9999;
+                }
+        }
 }
 
 //el nom pot crear confusio, no es crear un marker a una posicio random, sino que es posa a la posicio
 //location i amb titol:info
 function placeRandomMarker(location,id,info) {
-  var image = 'fire.png';
+  var image = 'img/incidencia.png';
   var marker = new google.maps.Marker({
       position: location, 
       map: map,
@@ -582,14 +628,13 @@ function placeRandomMarker(location,id,info) {
 
   bounds.extend(location);
   markers.push(marker);
-  id_incidencia_actual = id;
   map.setCenter(location);
   alert("crearem nova incidencia amb lat="+location.lat()+" i ln= "+location.lng() + " i info= "+info);
 }
 
 function enviaNovaIncidencia(lat,ln,descr) {
         var url_base = "http://roger90.no-ip.org/HelloWorld/resources/emergps/new_inc_web";
-        var atributs = "?user=-1&posy="+lat+"&posx="+ln+"&com="+descr;
+        var atributs = "?posx="+ln+"&posy="+lat+"&comentari="+descr;
         
                 var url = url_base+atributs;
                 alert(url);
@@ -607,6 +652,7 @@ function enviaNovaIncidencia(lat,ln,descr) {
                   alert(resp);  
                   var pos = new google.maps.LatLng(lat,ln);
                   placeRandomMarker(pos,resp,descr);
+                  updateLinks(resp,descr);
                   distRecursos(resp,pos);
                 }
                 req.open("GET", url, true);
@@ -614,7 +660,7 @@ function enviaNovaIncidencia(lat,ln,descr) {
 }
 
 function placeMarker(location) {
-  var image = 'fire.png';
+  var image = 'wee/incidencia.png';
   var marker = new google.maps.Marker({
       position: location, 
       map: map,
@@ -636,8 +682,10 @@ function placeMarker(location) {
 }
 
 function buscaRecursId(id_recurs) {
+        
         for (var i = 0; i < recursos.length; i++) {
-                id_rec = obteId(recursos[i].getTitle());
+                var id_rec = obteId(recursos[i].getTitle());
+                alert("busquem id de recurs i trobem "+id_rec+", que el comparem amb "+id_recurs);
                 //alert("id trobat= " + id_rec+ " i id passat es= " + id_recurs);
                 if (id_rec == id_recurs) return i;
         }
@@ -648,12 +696,17 @@ function buscaRecursId(id_recurs) {
 
 //desasignar qualsevol el recurs duna incidencia
 function alliberarRecurs(id_recurs) {
-        var index;
-        index = buscaRecursId(id_recurs);
+        //var index;
+        alert("abans de buscarRecursID");
+        //index = buscaRecursId(id_recurs);
+        alert("despres de buscarRecursID, index = " + id_recurs);
+
         //if (index =! -1) {
-                var title = recursos[index].getTitle().split("#");
+                var title = recursos[id_recurs].getTitle().split("#");
                 title = title[0]+"#-1";
-                recursos[index].setTitle(title);        
+                alert("per dsasignar usarem el text " + title);
+                recursos[id_recurs].setTitle(title);    
+                alert("i el resultat ha estat " + recursos[id_recurs].setTitle(title));
         //}
         //else alert("error al alliberar recurs "+ id_recurs);
 }
@@ -664,17 +717,26 @@ function deleteIncidencia(id_inc) {
                 var id = markers[i].getTitle();
                 id = id.split("#");
                 id = id[1];
+                alert("al delete incidencia, comparem " + id + " amb " + id_inc);
                 if (id == id_inc) {
-                        alert("efectivament donarem de baixa la num " + id);
                         markers[i].setMap(null);
                         markers.splice(i,1);
-                        alert("hem eliminat incidencia correctament");
+                        alert("hem eliminat incidencia correctament am posicio "+i);
                 }
         }
+        alert("dosssssssssssssssssssssssss");
+        for (var k = 0; k < links.length; k++) {
+                if (links[k].id_inc == id_inc) {
+                        alert("eliminarem tambe el seu link " + links[k].html);
+                        links.splice(k,1);
+                        updateLinks(-1,"");
+                }               
+        }       
+        
         for (var j = 0; j < recursos.length; j++) {
                 if (obteIdInc(recursos[j].getTitle()) == id_inc) {
                         alert("alliberarem el recurs " + recursos[j].getTitle());
-                        logoutRecurs(j);
+                        alliberarRecurs(j);
                 }
         }
 }
@@ -691,3 +753,27 @@ function logoutRecurs(id_recurs) {
         //}
         //else alert("error al logout recurs "+ id_recurs);
 }
+
+function createRequest() {
+	  var result = null;
+	  if (window.XMLHttpRequest) {
+		// FireFox, Safari, etc.
+		result = new XMLHttpRequest();
+		if (typeof result.overrideMimeType != 'undefined') {
+		  result.overrideMimeType('text/xml'); // Or anything else
+		}
+	  }
+	  else if (window.ActiveXObject) {
+		// MSIE
+		result = new ActiveXObject("Microsoft.XMLHTTP");
+	  } 
+	  else {
+		// No known mechanism -- consider aborting the application
+	  }
+	  return result;
+}
+/*
+?id=3&id_ass=10009
+just abans de cridar asign_uni_web, url = http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web?id=3&id_ass=10009
+just abans de cridar asign_uni_web, url = http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web?id=2&id_ass=10002z10004z10005
+just abans de cridar asign_uni_web, url = http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web?id=2&id_ass=10002z10004z10005*/
