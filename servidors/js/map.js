@@ -1,6 +1,6 @@
 var map;
 var markers = new Array();
-var links = ""; 
+var links = new Array(); 
 var index = 0;
 var bounds = new google.maps.LatLngBounds();
 var geocoder = new google.maps.Geocoder();
@@ -118,7 +118,7 @@ function updateEstat() {
 		  	var pos = new google.maps.LatLng(inc_noves[i+2],inc_noves[i+1]);
 		  	placeRandomMarker(pos,inc_noves[i],inc_noves[i+3]);
 		  	updateLinks(inc_noves[i+3]);
-		  	index++;
+		  	//index++;
 		  	distRecursos(inc_noves[i],pos);
 		  }  		  
 		}
@@ -521,9 +521,23 @@ function creaInfo(titol,direccio,horaIn) {
 	return "Nom incidencia: "+titol+" <br> Direccio: " + direccio + " <br> Hora inici: " + horaIn + " </div></a>";
 }
 
-function updateLinks(title) {
-		links += "<a href='#'><div class='element_llista' id="+index+" onclick='eventLlista_inc(this.id)'> "+title+"</div></a>";
-		document.getElementById("llista_inc").innerHTML = links;
+function updateLinks(id_inc,title) {
+	if (id_inc != -1) {
+		var nou_link = {
+			html:"<a href='#'><div class='element_llista' id="+index+" onclick='eventLlista_inc(this.id)'> "+title+"</div></a>",
+			id_inc: id_inc
+		};
+		links.push(nou_link);
+		index++;
+	}
+	else {
+		index--;
+	}
+		var links_total = "";
+		for (var i = 0; i < links.length; i++) {
+			links_total += links[i].html;
+		}
+		document.getElementById("llista_inc").innerHTML = links_total;
 }
 
 function horaActual() {
@@ -541,19 +555,18 @@ function crearIncidencia() {
 	var tIni = horaActual();
 	var info = creaInfo(title,lat+","+lng,tIni);
 	
-	updateLinks(title);
-	index++;
-	enviaNovaIncidencia(location.lat(),location.lng(),info);
+	//updateLinks(title);
+	//index++;
+	enviaNovaIncidencia(location.lat(),location.lng(),title);
 }
 
 function crearIncidenciaGeocode(location) {
 	var title = document.formGeocode.titolInc.value;
 	var tIni = horaActual();
 	var info = creaInfo(title,location.lat()+","+location.lng(),tIni);
-	alert("~~~~~~~~~");
-	updateLinks(title);
-	index++;
-	enviaNovaIncidencia(location.lat(),location.lng(),info);
+	//updateLinks(title);
+	//index++;
+	enviaNovaIncidencia(location.lat(),location.lng(),title);
 }
 
 function codeAddress() { 
@@ -629,6 +642,7 @@ function enviaNovaIncidencia(lat,ln,descr) {
 		  alert(resp);  
 		  var pos = new google.maps.LatLng(lat,ln);
 		  placeRandomMarker(pos,resp,descr);
+		  updateLinks(resp,descr);
 		  distRecursos(resp,pos);
 		}
 		req.open("GET", url, true);
@@ -700,8 +714,14 @@ function deleteIncidencia(id_inc) {
 			alert("hem eliminat incidencia correctament am posicio "+i);
 		}
 	}
-
-	//borrem links	
+	alert("dosssssssssssssssssssssssss");
+	for (var k = 0; k < links.length; k++) {
+		if (links[k].id_inc == id_inc) {
+			alert("eliminarem tambe el seu link " + links[k].html);
+			links.splice(k,1);
+			updateLinks(-1,"");
+		}		
+	}	
 	
 	for (var j = 0; j < recursos.length; j++) {
 		if (obteIdInc(recursos[j].getTitle()) == id_inc) {
