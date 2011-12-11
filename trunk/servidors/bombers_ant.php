@@ -53,6 +53,9 @@
 					</div>
 						<input type="button" onclick="enviarAssigFormulari()" id="inputButtonGeocode" style="width:150px" title="Click per assignar" value="Click per assignar" />																					
 					</form>
+					</div>
+						<input type="button" onclick="updateEstat()" id="inputButtonGeocode" style="width:150px" title="Click per assignar" value="Click per assignar" />																					
+					</form>
 				</fieldset>
 				</div>
 			</div>

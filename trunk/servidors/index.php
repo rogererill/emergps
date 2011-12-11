@@ -1,10 +1,9 @@
-<?php
-	include("inc/util.php");
-	connect_DB_users();
-	
+<?php	
 	if ($_POST['accedir']) {
 		$user = $_POST['user'];
 		$pass = $_POST['pass'];
+		
+		$url = 'http://roger90.no-ip.org/emergps/web/bombers.php';
 		
 		if ($user == 'bombers' && $pass == 'bombers') header ("Location:".$url);
 	}
