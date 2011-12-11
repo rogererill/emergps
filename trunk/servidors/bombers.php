@@ -80,7 +80,7 @@
 						<input type="button" onclick="showAssignacions()" id="cr" style="width:150px" title="cr" value="veure resultats dist" />												
 						<input type="button" onclick="updateEstat()" id="est" style="width:150px" title="est" value="estatt" />												
 						<input type="button" onclick="updatePosicions()" id="pos" style="width:150px" title="pos" value="pos" />												
-						<input type="button" onclick="deleteIncidencia(0)" id="de" style="width:150px" title="de" value="delete" />												
+						<input type="button" onclick="deleteIncidencia(1)" id="de" style="width:150px" title="de" value="delete" />												
 
 						<input type="button" onclick="assignarInc(10009,777)" id="ass" style="width:150px" title="ass" value="assignar10009" />												
 						<input type="button" onclick="alliberarRecurs(10009)" id="all" style="width:150px" title="all" value="alliberar10009" />												
