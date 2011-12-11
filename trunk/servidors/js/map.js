@@ -113,7 +113,7 @@ function updateEstat() {
 		   */
 		  
 		  // format de la incidencia: id,lat,lon,descripcio
-		  for (var i = 0; i < inc_noves.length; i+=4) {
+		  for (var i = 0; i < inc_noves.length; i+=999999) {
 		  	//var i = 0;
 		  	var pos = new google.maps.LatLng(inc_noves[i+2],inc_noves[i+1]);
 		  	placeRandomMarker(pos,inc_noves[i],inc_noves[i+3]);
@@ -124,7 +124,7 @@ function updateEstat() {
 		}
 		req.open("GET", url, true);
 		req.send();
-		var s = setTimeout("updateEstat()",5000);
+		//var s = setTimeout("updateEstat()",5000);
 }
 
 function updatePosicions() {
@@ -230,7 +230,7 @@ function initialize() {
   	document.getElementById("info").innerHTML = text;
   	//enquesta();
   	var t = setTimeout("updatePosicions()",2000);
-  	var s = setTimeout("updateEstat()",5000);
+  	//var s = setTimeout("updateEstat()",5000);
 }
 
 function maxDistancia() {
@@ -268,23 +268,23 @@ function assignarIncidencies(id_inc) {
 	var text = "?id="+id_inc+"&id_ass=";
 	for (var i = 0; i < rutes.length; i++) {
 		assignarInc(rutes[i].recurs,id_inc);
-		if(i < rutes.length-1) text += rutes[i].recurs+",";
+		if(i < rutes.length-1) text += rutes[i].recurs+"z";
 		else text += rutes[i].recurs;
 	}
 	alert(text);
 	rutes.splice(0,rutes.length);
 	distancies.splice(0,distancies.length);
 	//alert("despres de fer splice, el vector de rutes queda am long= "+rutes.length);
-	alert("la info que usarem per asignar sera: " + text);
+	//alert("la info que usarem per asignar sera: " + text);
 	enviarAssignacio(text);	
 }
 
 function enviarAssignacio(atributs) {
-	alert("entrem a enviar assignacio del servei den roger, atributs= "+atributs);
+	
 		var url_base = "http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web";
 		//atributs = "?id=1&id_ass=10002";
 		var url = url_base+atributs;
-		
+		var url = url_base + "?id=2&id_ass=10002z10004z10005";
 		var req = createRequest(); // defined above
 		// Create the callback:
 		req.onreadystatechange = function() {
@@ -298,6 +298,7 @@ function enviarAssignacio(atributs) {
 		  var resp = req.responseText;	  
 		  alert(resp);  
 		}
+		alert("just abans de cridar asign_uni_web, url = " + url);
 		req.open("GET", url, true);
 		req.send();
 }
@@ -693,4 +694,8 @@ function logoutRecurs(id_recurs) {
 	//}
 	//else alert("error al logout recurs "+ id_recurs);
 }
-
+/*
+?id=3&id_ass=10009
+just abans de cridar asign_uni_web, url = http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web?id=3&id_ass=10009
+just abans de cridar asign_uni_web, url = http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web?id=2&id_ass=10002z10004z10005
+just abans de cridar asign_uni_web, url = http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web?id=2&id_ass=10002z10004z10005*/
