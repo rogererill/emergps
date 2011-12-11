@@ -279,6 +279,13 @@ function assignarIncidencies(id_inc) {
 	enviarAssignacio(text);	
 }
 
+function enviarAssigFormulari() {
+	var id_inc = document.formGeocode.id_inc.value;
+	var id_recurs = document.formGeocode.id_recurs.value;
+	var atributs = "?id="+id_inc+"&id_ass="+id_recurs;
+	enviarAssignacio(atributs);
+}
+
 function enviarAssignacio(atributs) {
 	
 		var url_base = "http://roger90.no-ip.org/HelloWorld/resources/emergps/asign_uni_web";
