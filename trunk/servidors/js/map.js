@@ -309,7 +309,6 @@ function enviarAssignacio(id_inc,atributs) {
 		  var resp = req.responseText;	 
 		  atributs = atributs.split("&"); 
 		  showRouteInc(id_inc);
-		  alert(resp);  
 		}
 		req.open("GET", url, true);
 		req.send();
@@ -323,7 +322,7 @@ function assignarInc(id_recurs,id_inc) {
 			var title = recursos[index].getTitle().split("#");
 			title = title[0]+"#"+id_inc+"";
 			recursos[index].setTitle(title);	
-			alert("s'ha assignat el recurs num " + id_recurs + " a la incidencia num " + recursos[index].getTitle());		
+			alert("s'ha assignat el recurs num " + id_recurs + " a la incidencia num " + obteIdInc(recursos[index].getTitle()));		
 	}
 	else alert("error al assignar incidencia a recurs "+ id_recurs);
 }
@@ -338,8 +337,8 @@ function logInRecurs(id,lat,ln) {
 	var location = new google.maps.LatLng(lat,ln);
 	
 	var id2 = id+"";
-	id2 = id2.split("");
-	alert("let's login "+ id2);
+    id2 = id2.split("");
+	
 	if(id2[0] == 1) {
 		var image = 'img/policia.png';
 	}
@@ -498,8 +497,7 @@ function enviaNovaIncidencia(lat,ln,descr) {
 			return;
 		  }
 		  // Request successful, read the response
-		  var resp = req.responseText;	  
-		  alert(resp);  
+		  var resp = req.responseText;	    
 		  var pos = new google.maps.LatLng(lat,ln);
 		  placeRandomMarker(pos,resp,descr);
 		  updateLinks(resp,descr);
