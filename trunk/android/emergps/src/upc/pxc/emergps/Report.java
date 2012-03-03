@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,7 +24,7 @@ public class Report extends Activity implements OnClickListener{
 	private View button;
 	private TextView tv;
 	private TextView lon, lat;
-	
+	private CheckBox checkBox;
 	final String TAG = "REPORT";
 	
 	private ComService mBoundService;
@@ -71,7 +72,18 @@ public class Report extends Activity implements OnClickListener{
 		tv = (TextView) findViewById(R.id.desc_report);
 		lon = (TextView)findViewById(R.id.long_report);
 		lat = (TextView)findViewById(R.id.lat_report);
-		
+        checkBox = (CheckBox) findViewById(R.id.check_report);
+        
+        checkBox.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+	            mBoundService.posAleatoria(((CheckBox) v).isChecked());
+            }
+        });
+        
+        
+        
+        checkBox.setChecked(false);
+
 		lon.setEnabled(false);
 		lat.setEnabled(false);
 		
@@ -101,6 +113,7 @@ public class Report extends Activity implements OnClickListener{
 				Toast.makeText(this, "Error en l'enviament", Toast.LENGTH_SHORT).show();
 			}
 		break;
+
 		}
 		
 	}
@@ -123,6 +136,7 @@ public class Report extends Activity implements OnClickListener{
 
 			lon.setText(Double.toString(mBoundService.getLoc().getLongitude()));
 			lat.setText(Double.toString(mBoundService.getLoc().getLatitude()));
+			checkBox.setChecked( mBoundService.getAleat());
 		}
 	};
 	

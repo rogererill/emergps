@@ -49,6 +49,13 @@
     			android:layout_height="wrap_content"
     			android:layout_width="fill_parent" 
     			android:text="@string/report_button"/>
+    		<CheckBox
+    			android:id="@+id/check_report"
+    			android:layout_height="wrap_content"
+    			android:layout_width="fill_parent" 
+    			android:text="Posició aleatoria"/>
+    			
+
 
     </TableLayout>
 </LinearLayout>

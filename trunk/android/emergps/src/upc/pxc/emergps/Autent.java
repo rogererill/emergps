@@ -73,7 +73,7 @@ public class Autent extends Activity implements OnClickListener{
     	Thread t = new Thread(){
     		public void run(){
     			
-    			if(mBoundService.autent(user, pass)){
+    			if(/*mBoundService.autent(user, pass)*/true){
     				activity.runOnUiThread(new Runnable() {
     				    public void run() {
     				        Toast.makeText(activity, "Benvingut usuari "+ mBoundService.getId(), Toast.LENGTH_SHORT).show();

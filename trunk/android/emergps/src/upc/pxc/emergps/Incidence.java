@@ -197,15 +197,26 @@ public class Incidence extends MapActivity implements OnClickListener {
 		public void onReceive(Context context, Intent intent) {
 			b_report.setEnabled(true);
 			
-			Bundle extras = intent.getExtras();
-			//int id = extras.getInt(); FI INCIDENCIA
-			
+			Bundle extras = intent.getExtras();		
 			
 			String dadesStr = extras.getString(mBoundService.DADES_EXTRA);
-			dat = new Dades();
-			dat.setDades(dadesStr);
+			Log.d("RECEIVER", dadesStr);
 			
-			updateIncidence();
+			int estat = extras.getInt(mBoundService.DADES_ESTAT);
+			if(estat == -1){
+				Toast.makeText(activity, "Incidència finalizada!", Toast.LENGTH_SHORT).show();
+				finish();
+			}
+			else if (estat == 0) Toast.makeText(activity, "Senyal temporalment perduda..", Toast.LENGTH_SHORT).show();
+			else {
+
+				dat = new Dades();
+				dat.setDades(dadesStr);
+				
+				updateIncidence();		
+			}
+			
+
 		
 		}
 	};

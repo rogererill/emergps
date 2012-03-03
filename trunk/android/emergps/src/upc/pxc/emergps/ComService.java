@@ -1,6 +1,7 @@
 package upc.pxc.emergps;
 
 import java.io.IOException;
+import java.util.Random;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -44,11 +45,18 @@ public class ComService extends Service{
 		 public static final String POS_FILTER = "upc.pxc.emergps.filter.pos";
 		 public static final String DADES_FILTER = "upc.pxc.emergps.filter.dades";
 		 public static final String DADES_EXTRA = "dades"; 
+		 public static final String DADES_ESTAT = "dades_estat";
 		 private static final String ACK = "true";
-		 private static final int TIME_ENV_POS = 5000;
-		 private static final int TIME_DADES_INC = 5000;
+		 private static final int TIME_ENV_POS = 3000;
+		 private static final int TIME_DADES_INC = 3000;
 		private static final int NOTIF_ALERTA_ID = 0;
 		 private String dades = "";
+
+		 
+		 final double LONG_MIN = 2.07; 
+		 final double LONG_MAX = 2.19; 
+		 final double LAT_MIN = 41.30; 
+		 final double LAT_MAX = 41.43; 
 		 
 		@Override
 		public IBinder onBind(Intent intent) {
@@ -73,6 +81,7 @@ public class ComService extends Service{
 	            	public void run(){
 	            		while(true){
 	            			if(id != -1){
+	            				if(posAleatoria)	modPosAleat();
 	            				broadCastPos();
 			            		if(enviaPos()){
 			            			if(!incid)	notificar();
@@ -94,7 +103,6 @@ public class ComService extends Service{
 	            		while(true){
 	            			if(incid){
 	            				dades = actIncid();
-	            				Log.d("THREAD", dades);
 	            				//handler.post(r);
 	            				broadCastDades();
 	            			}
@@ -110,12 +118,27 @@ public class ComService extends Service{
 	            dades_inc.start();
 	      }	      
 	      
+	      private Random mRnd = new Random();
+	      private void modPosAleat(){
+	    	  double lon, lat;
+	    	  double x = mRnd.nextDouble();
+	    	  double y = mRnd.nextDouble();
+	    	  
+	    	  lon = ((LONG_MAX - LONG_MIN)*x)+LONG_MIN;
+	    	  lat = ((LAT_MAX - LAT_MIN)*y)+LAT_MIN;
+	    	  
+	    	  loc.setLongitude(lon);
+	    	  loc.setLatitude(lat);
+	    	  
+	      }
 	      
+	      
+	      NotificationManager notManager = null;
 	      private void notificar(){
 	    	  
 	    	//Obtenemos una referencia al servicio de notificaciones
 	    	  String ns = Context.NOTIFICATION_SERVICE;
-	    	  NotificationManager notManager =
+	    	  notManager =
 	    	      (NotificationManager) getSystemService(ns);
 	    	  
 	    	//Configuramos la notificación
@@ -149,7 +172,9 @@ public class ComService extends Service{
 	    	  
 	    	//Enviar notificación
 	    	  notManager.notify(NOTIF_ALERTA_ID, notif);
+	
 	      }
+	      
 	      
 	      @Override
 	      public void onDestroy() {
@@ -217,10 +242,15 @@ public class ComService extends Service{
 	    	  return true;
 	      }
 	      
+    	  public boolean getAleat(){
+    		  return posAleatoria;
+    	  }
 	      
+	      boolean posAleatoria = false;
 	      LocationManager locManager;
 	      LocationListener locListener;
 	      Location loc;
+	      Location ultimLocation;
 	      private void startLocalizacion()
 	      {
 	          //Obtenemos una referencia al LocationManager
@@ -239,9 +269,16 @@ public class ComService extends Service{
 	          locListener = new LocationListener() {
 	        	  @Override
 	              public void onLocationChanged(Location location) {
-	                  loc = location;
+	        		  Log.d("LOCATION", "Pos Nova!");
+	        		  ultimLocation = location;
+	                  if(!posAleatoria){
+	                	  loc.setLatitude(location.getLatitude());
+	                	  loc.setLongitude(location.getLongitude());
+	                  }
 	              }
 
+
+	        	  
 				@Override
 				public void onProviderDisabled(String provider) {
 
@@ -266,15 +303,26 @@ public class ComService extends Service{
 	              //...
 	          };
 	       
-	          locManager.requestLocationUpdates(
-	              LocationManager.GPS_PROVIDER, 30000, 5000, locListener);
+	          locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locListener);
 	      }
+
+	      public void posAleatoria(boolean aleat){
+	    	  this.posAleatoria = aleat; 
+	    	  
+	    	  if(!aleat && ultimLocation != null){
+	    		  //loc = ultimLocation;
+	    		  loc.setLatitude(ultimLocation.getLatitude());
+            	  loc.setLongitude(ultimLocation.getLongitude());
+
+	    	  }
+	      }
+	      
 	      
 	      public boolean enviaPos(){
 		  		String result = "0";
 		    	  try {
 		    		  Double posX, posY;
-		    		  if(loc == null || loc.getLongitude() < 2d || loc.getLongitude() > 2.3d || loc.getLatitude() < 40.8d || loc.getLatitude() > 42.7d ){
+		    		  if(loc == null || loc.getLongitude() < LONG_MIN || loc.getLongitude() > LONG_MAX || loc.getLatitude() < LAT_MIN || loc.getLatitude() > LAT_MAX ){
 		    	          loc.setLatitude(41.4164d);	// POSICIO DE LES COTXERES
 		    	          loc.setLongitude(2.1345d);
 		    		  }
@@ -285,7 +333,7 @@ public class ComService extends Service{
 		    		 
 		    		        HttpClient httpclient = new DefaultHttpClient();  
 		    		       
-		    		        //Log.d(TAG, "long: "+posX+" - lat: "+posY);
+		    		        Log.d(TAG, "long: "+posX+" - lat: "+posY);
 		    		        
 		    		        HttpGet request = new HttpGet(URL+"/env_pos");
 		    		        request.addHeader("id", Integer.toString(id));
@@ -339,6 +387,8 @@ public class ComService extends Service{
 					e.printStackTrace();
 					Log.i("actIncid(ERROR)", result);  
 				}
+		    	if(result.equals("-1") && notManager != null)	notManager.cancel(NOTIF_ALERTA_ID);
+		    	
 	    	  return result;
 	      }
 	      
@@ -400,6 +450,8 @@ public class ComService extends Service{
 	    	  if(res){
 	    		  incid = false;
 	    		  nIncid = -1;
+	    	      // TODO
+	    		  if(notManager != null)	notManager.cancel(NOTIF_ALERTA_ID);
 	    	  }
 	    	  return res;
 	      }
@@ -427,10 +479,12 @@ public class ComService extends Service{
 					e.printStackTrace();
 				}
 	    	  res = result.equals(ACK);
-	    	  if(res){	//TODO
+	    	  if(res){	
 	    		  incid = false;
 	    		  id = -1;
 	    		  nIncid = -1;
+	    		  posAleatoria = false;
+	    		  if(notManager != null) notManager.cancel(NOTIF_ALERTA_ID);
 	    	  }
 	    	  return res;
 	      }
@@ -444,16 +498,40 @@ public class ComService extends Service{
 		}
 		
 		private void broadCastDades(){
-			if(dades.equals("-1") || dades.equals("0")){
+			if(dades.equals("-1")){
 				incid = false;
 				nIncid = -1;
-				Log.d("BroadCastDades", "Error del servidor");
-			} else {
-				Intent intent = new Intent();
+			} 
+			
+			// TODO
+			if(dades.equals("0")){
+				/*
+				activity.runOnUiThread(new Runnable() {
+				    public void run() {
+				        Toast.makeText(activity, "Senyal temporalment perduda..", Toast.LENGTH_SHORT).show();
+				    }
+				});
+				*/
+				Log.d("BROADCASTDADES", "Senyal temporalment perduda..");
+				
+			} else if(dades.equals("-1")){
+				Log.d("BROADCASTDADES", "Incidència finalizada!");
+				//Toast.makeText(this, "Incidència finalizada!", Toast.LENGTH_SHORT).show();
+			}
+
+			Intent intent = new Intent();
+			
+			int estat = 1;
+			if(dades.equals("-1"))		estat = -1;
+			else if(dades.equals("0"))	estat = 0;
+				
+				intent.putExtra(DADES_ESTAT, estat);
+				
+
 				intent.putExtra(DADES_EXTRA, dades);
 				intent.setAction(DADES_FILTER); //Define intent-filter
 				sendBroadcast(intent);
-	
-			}
+			
+			
 		}
 	}
