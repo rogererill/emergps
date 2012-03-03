@@ -1,5 +1,6 @@
 package upc.pxc.emergps;
 
+import upc.pxc.emergps.R;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,11 +13,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 public class Autent extends Activity implements OnClickListener{
 	final String TAG = "AUTENT";
 	EditText tu, tp;
 	Button login;
+	ImageView iv;
 	
 	private ServiceConnection conn;
 	private IComService myService;
@@ -32,8 +35,16 @@ public class Autent extends Activity implements OnClickListener{
         findViews();
        
     }
-
+    
     private void findViews(){
+
+    	
+    	iv = (ImageView) findViewById(R.id.emergps_image);
+    	/*iv.setAdjustViewBounds(true);
+    	iv.setMaxHeight(50);
+    	iv.setMaxWidth(50);
+    	iv.setScaleType(scaleType.)*/
+    	
         tu = (EditText) findViewById(R.id.text_user);
         tp = (EditText) findViewById(R.id.text_pass);
         login = (Button) findViewById(R.id.login_button);

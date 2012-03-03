@@ -9,8 +9,7 @@
    android:id="@+id/emergps_image"
    android:src="@drawable/emergps"
    android:layout_width="wrap_content"
-   android:layout_height="wrap_content"
-   />
+   android:layout_height="wrap_content" />
     <EditText
     	android:id="@+id/text_user"
     	android:hint="@string/original_user"
@@ -31,4 +30,6 @@
     	android:layout_height="wrap_content"
     	android:layout_width="fill_parent" />
     
+    
+   
 </LinearLayout>
